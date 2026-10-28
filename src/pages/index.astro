@@ -9,9 +9,9 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
 const pad = (n: number) => String(n).padStart(2, '0');
 
 const highlights = [
-	{ value: '7,500', unit: 'concurrent users', text: 'Reworked a live quiz system to handle them.' },
-	{ value: '20M DKK', unit: 'annual recurring revenue', text: 'Engineering on a car-booking platform at that scale.' },
-	{ value: '50+ → 0', unit: 'observed malicious requests / sec', text: 'Internal systems that used to be reachable from the internet, before and after the Zero Trust rollout.' },
+	{ title: 'Live systems under load', text: 'Reworking production systems so they hold up at high concurrency.' },
+	{ title: 'Platforms a business runs on', text: 'Building and maintaining revenue-critical software, end to end.' },
+	{ title: 'Zero Trust security', text: 'Designing and rolling out identity-based access for internal systems.' },
 ];
 
 const toolkit = [
@@ -94,13 +94,12 @@ const toolkit = [
 				<p>
 					At Side-Walk I work across the whole lifecycle: architecture, implementation, deployment,
 					maintenance and optimisation. That includes independent audits and takeovers of unfamiliar
-					codebases for larger companies, including Grant Thornton, and performance work on Laravel
-					applications, database queries and game servers.
+					codebases for larger companies, and performance work on web applications, databases and game
+					servers.
 				</p>
 				<p>
-					I also designed and rolled out the security architecture for our internal systems:
-					Cloudflare Zero Trust, Microsoft Entra ID over OIDC with SCIM provisioning and role-based
-					access, mTLS for client websites, and Smallstep SSH certificates in place of hardcoded keys.
+					I also designed and rolled out zero-trust access for our internal systems, built on
+					identity-based access control, automated provisioning, mTLS and short-lived SSH certificates.
 				</p>
 				<p class="mono tenure">Part-time through high school · full-time since 2026</p>
 			</div>
@@ -109,8 +108,7 @@ const toolkit = [
 				{
 					highlights.map((item) => (
 						<li>
-							<span class="value">{item.value}</span>
-							<span class="unit mono">{item.unit}</span>
+							<span class="highlight-title">{item.title}</span>
 							<span class="text">{item.text}</span>
 						</li>
 					))
@@ -391,16 +389,11 @@ const toolkit = [
 		border-bottom: 1px solid var(--line);
 	}
 
-	.value {
-		font-size: clamp(2rem, 3.4vw, 2.75rem);
+	.highlight-title {
+		font-size: clamp(1.375rem, 2.2vw, 1.75rem);
 		font-weight: 500;
-		line-height: 1;
-		letter-spacing: -0.04em;
-		font-variant-numeric: tabular-nums;
-	}
-
-	.unit {
-		color: var(--ink-3);
+		line-height: 1.15;
+		letter-spacing: -0.03em;
 	}
 
 	.text {
