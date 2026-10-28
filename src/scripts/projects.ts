@@ -1,6 +1,6 @@
 // The home page project list shows the first few projects until the visitor
 // asks for the rest. The inline script in HomePage.astro collapses it before
-// the first paint and reads the same storage key.
+// the first paint. Going back to the page restores it as it was left.
 
 const EASE_OUT = 'cubic-bezier(0.23, 1, 0.32, 1)';
 
@@ -14,9 +14,6 @@ export function setUpProjectList() {
 		delete list.dataset.collapsed;
 		button.setAttribute('aria-expanded', 'true');
 		more.hidden = true;
-		try {
-			sessionStorage.setItem('projects', 'all');
-		} catch {}
 
 		const extras = [...list.querySelectorAll<HTMLElement>('[data-extra]')];
 		if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {

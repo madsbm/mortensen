@@ -121,18 +121,12 @@ const person = JSON.stringify({
 			)
 		}
 		<script is:inline>
-			// Collapse the list before it paints, so it never jumps. Once opened it
-			// stays open for the visit, so coming back from a project that was
-			// hidden still has a title to morph into. Without JavaScript every
-			// project shows. The storage key is shared with src/scripts/projects.ts.
+			// Collapse the list before it paints, so it never jumps. Without
+			// JavaScript every project shows and the button stays hidden.
 			{
 				const list = document.querySelector('[data-projects]');
 				const more = document.querySelector('[data-projects-more]');
-				let open = false;
-				try {
-					open = sessionStorage.getItem('projects') === 'all';
-				} catch {}
-				if (more && !open) {
+				if (more) {
 					list.dataset.collapsed = '';
 					more.hidden = false;
 				}
@@ -398,7 +392,13 @@ const person = JSON.stringify({
 	}
 
 	.more {
+		display: flex;
+		justify-content: center;
 		padding-top: clamp(24px, 3vw, 36px);
+	}
+
+	.more[hidden] {
+		display: none;
 	}
 
 	.project {
