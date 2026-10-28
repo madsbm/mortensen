@@ -24,6 +24,7 @@ const encoded = encode(site.email, key);
 		effect="ripple"
 		nativeOnly
 		media="(prefers-reduced-motion: no-preference)"
+		backdrop="var(--bg-raised)"
 		class="form-fx"
 		options={{ trigger: 'none', amplitude: 0.35, refraction: 40, dispersion: 0.2, shine: 0.2, decay: 1.4 }}
 	>
@@ -104,6 +105,13 @@ const encoded = encode(site.email, key);
 		.address :global(.email:hover) {
 			text-decoration-color: var(--ink);
 		}
+	}
+
+	/* The ripple redraws the whole box, so clip it to the form's corners. */
+	.contact-grid :global(.form-fx) {
+		align-self: start;
+		border-radius: 20px;
+		overflow: clip;
 	}
 
 	.form {

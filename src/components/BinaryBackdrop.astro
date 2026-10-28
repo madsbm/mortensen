@@ -1,0 +1,71 @@
+---
+import CanvasFx from './CanvasFx.astro';
+---
+
+<div class="backdrop" aria-hidden="true">
+	<CanvasFx
+		effect="asciify"
+		sizing="fill"
+		pointer="window"
+		media="(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)"
+		class="backdrop-fx"
+		options={{
+			charset: 'binary',
+			radius: 0.32,
+			softness: 1,
+			scale: 2,
+			spacing: 1,
+			background: 'auto',
+			backgroundOpacity: 0,
+			contrast: 1.7,
+			brightness: 0.45,
+			glow: 0,
+			aberration: 0.3,
+			followSpeed: 4,
+		}}
+	>
+		<canvas class="art" data-backdrop-art></canvas>
+	</CanvasFx>
+</div>
+
+<script>
+	import { paintBackdrop } from '../scripts/backdrop';
+	paintBackdrop();
+</script>
+
+<style>
+	.backdrop {
+		position: fixed;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+	}
+
+	.backdrop :global(.backdrop-fx) {
+		height: 100%;
+	}
+
+	/* The artwork only exists for the effect to read. A veil sits between it
+	   and the effect's output, so the page stays white and only the binary
+	   glyphs around the cursor show. The effect still samples the artwork:
+	   the veil is outside the captured content either way. */
+	.backdrop :global(.backdrop-fx)::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		background: var(--bg);
+	}
+
+	/* The effect boosts glyph contrast for legibility; here the digits are
+	   texture, so they're knocked back behind the text. */
+	.backdrop :global(.backdrop-fx .fx-output) {
+		z-index: 2;
+		opacity: 0.35;
+	}
+
+	.art {
+		width: 100%;
+		height: 100%;
+	}
+</style>

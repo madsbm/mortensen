@@ -4,7 +4,7 @@
 // the content into an html-in-canvas source canvas where that API exists.
 
 interface Props {
-	effect: 'glass' | 'ripple';
+	effect: 'asciify' | 'ripple';
 	options?: Record<string, unknown>;
 	/** Only mount when this media query matches. */
 	media?: string;
@@ -12,10 +12,23 @@ interface Props {
 	sizing?: 'fill' | 'fit';
 	/** Skip the effect entirely when html-in-canvas is unavailable. */
 	nativeOnly?: boolean;
+	/** `window`: follow the mouse anywhere, for layers that sit behind the page. */
+	pointer?: 'self' | 'window';
+	/** Colour painted behind the content. Effects that refract need it opaque. */
+	backdrop?: string;
 	class?: string;
 }
 
-const { effect, options = {}, media, sizing = 'fit', nativeOnly = false, class: className } = Astro.props;
+const {
+	effect,
+	options = {},
+	media,
+	sizing = 'fit',
+	nativeOnly = false,
+	pointer = 'self',
+	backdrop = 'transparent',
+	class: className,
+} = Astro.props;
 ---
 
 <div
@@ -25,6 +38,8 @@ const { effect, options = {}, media, sizing = 'fit', nativeOnly = false, class: 
 	data-fx-media={media}
 	data-fx-sizing={sizing}
 	data-fx-native-only={nativeOnly ? '' : undefined}
+	data-fx-pointer={pointer}
+	style={`--fx-backdrop: ${backdrop}`}
 >
 	<canvas class="fx-source" hidden></canvas>
 	<div class="fx-content">
@@ -59,13 +74,11 @@ const { effect, options = {}, media, sizing = 'fit', nativeOnly = false, class: 
 		pointer-events: none;
 	}
 
-	/* Effects sample the captured pixels, so the content needs an opaque
-	   backdrop or refractions pull in transparent black. */
 	.fx-content {
 		position: relative;
 		width: 100%;
 		height: 100%;
-		background: var(--bg);
+		background: var(--fx-backdrop);
 	}
 
 	.fx[data-fx-sizing='fill'] .fx-inner {

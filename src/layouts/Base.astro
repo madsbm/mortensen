@@ -1,5 +1,6 @@
 ---
 import { Font } from 'astro:assets';
+import BinaryBackdrop from '../components/BinaryBackdrop.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import type { Crumb } from '../lib/types';
@@ -74,6 +75,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 		</script>
 	</head>
 	<body>
+		<BinaryBackdrop />
 		<a class="skip" href="#main">Skip to content</a>
 		<Header crumbs={crumbs} spy={spy} />
 		<main id="main">

@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import CanvasFx from '../components/CanvasFx.astro';
 import ProjectCover from '../components/ProjectCover.astro';
 import ContactForm from '../components/ContactForm.astro';
 import { site } from '../site';
@@ -24,33 +23,24 @@ const toolkit = [
 
 <Base spy>
 	<section class="hero" aria-labelledby="hero-title">
-		<CanvasFx
-			effect="glass"
-			sizing="fill"
-			nativeOnly
-			media="(hover: hover) and (pointer: fine) and (min-width: 768px) and (prefers-reduced-motion: no-preference)"
-			class="hero-fx"
-			options={{ size: 110, zoom: 1.35, targets: '[data-glass-target]', shine: 0.35, aberration: 0.8, follow: 0.22 }}
-		>
-			<div class="container hero-inner">
-				<p class="eyebrow mono"><span class="dot" aria-hidden="true"></span>{site.role} · {site.location}</p>
-				<h1 id="hero-title" class="display" data-glass-target>
-					Low-level by choice.<br />
-					<span class="muted">Full-stack by trade.</span>
-				</h1>
-				<div class="hero-foot">
-					<p class="lede">
-						I'm Mads, a software engineer focused on systems programming, concurrency and networking.
-						By day I build and harden production platforms at Side-Walk. After hours I'm writing tOS, a
-						bare-metal x86_64 operating system in Rust.
-					</p>
-					<div class="actions">
-						<a class="button button-solid" href="#work">See the work <span class="arrow" aria-hidden="true">↓</span></a>
-						<a class="button button-ghost" href="#contact">Get in touch</a>
-					</div>
+		<div class="container hero-inner">
+			<p class="eyebrow mono"><span class="dot" aria-hidden="true"></span>{site.role} · {site.location}</p>
+			<h1 id="hero-title" class="display">
+				Low-level by choice.<br />
+				<span class="muted">Full-stack by trade.</span>
+			</h1>
+			<div class="hero-foot">
+				<p class="lede">
+					I'm Mads, a software engineer focused on systems programming, concurrency and networking. By
+					day I build and harden production platforms at Side-Walk. After hours I'm writing tOS, a
+					bare-metal x86_64 operating system in Rust.
+				</p>
+				<div class="actions">
+					<a class="button button-solid" href="#work">See the work <span class="arrow" aria-hidden="true">↓</span></a>
+					<a class="button button-ghost" href="#contact">Get in touch</a>
 				</div>
 			</div>
-		</CanvasFx>
+		</div>
 	</section>
 
 	<section id="work" class="container section" data-section="work" aria-labelledby="work-title">
@@ -152,14 +142,6 @@ const toolkit = [
 <style>
 	/* ---------------------------------------------------------------- hero */
 
-	.hero {
-		min-height: 100svh;
-	}
-
-	.hero :global(.hero-fx) {
-		min-height: inherit;
-	}
-
 	.hero-inner {
 		display: flex;
 		flex-direction: column;
@@ -171,16 +153,8 @@ const toolkit = [
 	}
 
 	@media (min-width: 768px) {
-		/* The html-in-canvas source needs a definite height. */
-		.hero,
-		.hero :global(.hero-fx) {
-			height: clamp(640px, 100svh, 980px);
-			min-height: 0;
-		}
-
 		.hero-inner {
-			height: 100%;
-			min-height: 0;
+			min-height: clamp(640px, 100svh, 980px);
 		}
 	}
 

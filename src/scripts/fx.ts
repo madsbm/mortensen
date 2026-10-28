@@ -20,9 +20,9 @@ interface Module {
 }
 
 const effects: Record<string, () => Promise<Module>> = {
-	glass: () =>
-		import('../lib/canvasui/GlassVanilla').then((m) => ({
-			create: m.createGlass,
+	asciify: () =>
+		import('../lib/canvasui/AsciifyVanilla').then((m) => ({
+			create: m.createAsciify,
 			supports: m.supportsHtmlInCanvas,
 		})),
 	ripple: () =>
@@ -77,6 +77,25 @@ async function mount(root: HTMLElement) {
 	root.addEventListener('fx:splash', (event) => {
 		const { x, y, strength } = (event as CustomEvent<SplashDetail>).detail;
 		instance.splash?.(x, y, strength);
+	});
+	if (root.dataset.fxPointer === 'window') forwardPointer(root);
+}
+
+/** A layer that sits behind the page never receives pointer events itself,
+ *  so mouse movement anywhere in the window is replayed onto it. */
+function forwardPointer(root: HTMLElement) {
+	const replay = (type: string, { clientX, clientY, pointerType }: PointerEvent) =>
+		root.dispatchEvent(new PointerEvent(type, { clientX, clientY, pointerType }));
+
+	addEventListener(
+		'pointermove',
+		(event) => {
+			if (event.pointerType === 'mouse' || event.pointerType === 'pen') replay('pointermove', event);
+		},
+		{ passive: true },
+	);
+	document.addEventListener('pointerout', (event) => {
+		if (!event.relatedTarget) replay('pointerleave', event);
 	});
 }
 
