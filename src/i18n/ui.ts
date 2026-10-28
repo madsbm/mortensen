@@ -52,12 +52,53 @@ const en = {
 			'At Side-Walk I work across the whole lifecycle: architecture, implementation, deployment, maintenance and optimisation. That includes independent audits and takeovers of unfamiliar codebases for larger companies, and performance work on web applications, databases and game servers.',
 			'I also designed and rolled out zero-trust access for our internal systems, built on identity-based access control, automated provisioning, mTLS and short-lived SSH certificates.',
 		],
-		tenure: 'Part-time through high school · full-time since 2026',
-		highlights: [
-			{ title: 'Live systems under load', text: 'Reworking production systems so they hold up at high concurrency.' },
-			{ title: 'Platforms a business runs on', text: 'Building and maintaining revenue-critical software, end to end.' },
-			{ title: 'Zero Trust security', text: 'Designing and rolling out identity-based access for internal systems.' },
-		],
+		timeline: {
+			title: 'Timeline',
+			// The details show on hover. An event can have none.
+			events: [
+				{ when: '2018', title: 'Started programming', details: [] as string[] },
+				{
+					when: '2023',
+					title: 'Launched Lectimate',
+					details: [
+						'A study app for students whose school uses Lectio',
+						'1,000+ users',
+						'React Native, Expo, Swift, MongoDB, Next.js',
+						'Ran until November 2024',
+					],
+				},
+				{
+					when: '2025',
+					title: 'Joined Side-Walk',
+					details: [
+						'Full-stack developer, part-time alongside school',
+						'Laravel, Vue 3, Inertia',
+						'Web platforms, internal tools and iOS apps',
+						'Working directly with customers',
+					],
+				},
+				{
+					when: '2026',
+					title: 'Graduated high school (HTX)',
+					details: [
+						'Tradium, Mathematics A and Informatics B',
+						'GPA 10.9 out of 12',
+						'Final project (SOP) on cryptography in secure network protocols: Ed25519/X25519, RSA, HMAC, SHA, AES-CFB',
+						'SOP graded 12, the top grade',
+					],
+				},
+				{
+					when: '2026',
+					title: 'Full-time at Side-Walk',
+					details: [
+						'Software engineer',
+						'From architecture through to operations',
+						'Audits and takeovers of unfamiliar codebases',
+						'Rolled out Zero Trust access',
+					],
+				},
+			],
+		},
 	},
 	contact: {
 		title: 'Contact',
@@ -183,12 +224,52 @@ const da: Dictionary = {
 			'Hos Side-Walk arbejder jeg på tværs af hele livscyklussen: arkitektur, implementering, deployment, vedligeholdelse og optimering. Det omfatter selvstændige gennemgange og overtagelser af ukendte kodebaser for større virksomheder samt performancearbejde på webapplikationer, databaser og spilservere.',
 			'Jeg har også designet og udrullet zero trust-adgang til vores interne systemer, bygget på identitetsbaseret adgangskontrol, automatisk provisionering, mTLS og kortlivede SSH-certifikater.',
 		],
-		tenure: 'Deltid gennem gymnasiet · fuldtid siden 2026',
-		highlights: [
-			{ title: 'Livesystemer under pres', text: 'Ombygning af produktionssystemer, så de holder til mange samtidige brugere.' },
-			{ title: 'Platforme, en forretning kører på', text: 'Udvikling og drift af forretningskritisk software fra start til slut.' },
-			{ title: 'Zero trust-sikkerhed', text: 'Design og udrulning af identitetsbaseret adgang til interne systemer.' },
-		],
+		timeline: {
+			title: 'Tidslinje',
+			events: [
+				{ when: '2018', title: 'Begyndte at programmere', details: [] },
+				{
+					when: '2023',
+					title: 'Lancerede Lectimate',
+					details: [
+						'Studie-app til elever, hvis skole bruger Lectio',
+						'1.000+ brugere',
+						'React Native, Expo, Swift, MongoDB, Next.js',
+						'Kørte til november 2024',
+					],
+				},
+				{
+					when: '2025',
+					title: 'Startede hos Side-Walk',
+					details: [
+						'Full-stack-udvikler på deltid ved siden af skolen',
+						'Laravel, Vue 3, Inertia',
+						'Webplatforme, interne værktøjer og iOS-apps',
+						'Direkte kundedialog',
+					],
+				},
+				{
+					when: '2026',
+					title: 'Student fra HTX',
+					details: [
+						'Tradium, Matematik A og Informatik B',
+						'Karaktergennemsnit 10,9',
+						'SOP om kryptografi i sikre netværksprotokoller: Ed25519/X25519, RSA, HMAC, SHA, AES-CFB',
+						'SOP: 12',
+					],
+				},
+				{
+					when: '2026',
+					title: 'Fuldtid hos Side-Walk',
+					details: [
+						'Softwareudvikler',
+						'Fra arkitektur til drift',
+						'Gennemgange og overtagelser af ukendte kodebaser',
+						'Udrullede zero trust-adgang',
+					],
+				},
+			],
+		},
 	},
 	contact: {
 		title: 'Kontakt',

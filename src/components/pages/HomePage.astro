@@ -153,22 +153,32 @@ const person = JSON.stringify({
 		</div>
 
 		<div class="about-grid">
+			<p class="bio-lead">{t.about.lead}</p>
 			<div class="bio">
-				<p class="bio-lead">{t.about.lead}</p>
 				{t.about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
-				<p class="mono tenure">{t.about.tenure}</p>
 			</div>
+		</div>
 
-			<ul class="highlights">
+		<div class="timeline">
+			<h3 class="mono timeline-title">{t.about.timeline.title}</h3>
+			<ol class="stops">
 				{
-					t.about.highlights.map((item) => (
-						<li>
-							<span class="highlight-title">{item.title}</span>
-							<span class="text">{item.text}</span>
+					t.about.timeline.events.map((event) => (
+						<li class="stop" tabindex={event.details.length > 0 ? 0 : undefined} data-stop>
+							<span class="when mono">{event.when}</span>
+							<span class="road" aria-hidden="true" />
+							<span class="what">{event.title}</span>
+							{event.details.length > 0 && (
+								<ul class="details">
+									{event.details.map((detail) => (
+										<li>{detail}</li>
+									))}
+								</ul>
+							)}
 						</li>
 					))
 				}
-			</ul>
+			</ol>
 		</div>
 	</section>
 
@@ -191,7 +201,9 @@ const person = JSON.stringify({
 
 <script>
 	import { setUpProjectList } from '../../scripts/projects';
+	import { setUpTimeline } from '../../scripts/timeline';
 	setUpProjectList();
+	setUpTimeline();
 </script>
 
 <style>
@@ -552,18 +564,9 @@ const person = JSON.stringify({
 
 	.about-grid {
 		display: grid;
-		grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-		gap: clamp(40px, 6vw, 96px);
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+		gap: clamp(32px, 6vw, 96px);
 		padding-top: clamp(32px, 4vw, 48px);
-	}
-
-	.bio {
-		display: flex;
-		flex-direction: column;
-		gap: 18px;
-		color: var(--ink-2);
-		font-size: 1.0625rem;
-		line-height: 1.65;
 	}
 
 	.bio-lead {
@@ -575,43 +578,243 @@ const person = JSON.stringify({
 		font-weight: 500;
 	}
 
-	.bio p:not(.bio-lead, .tenure) {
-		max-width: 60ch;
-	}
-
-	.tenure {
-		color: var(--ink-3);
-	}
-
-	.highlights {
+	.bio {
 		display: flex;
 		flex-direction: column;
-		align-self: start;
+		gap: 18px;
+		max-width: 60ch;
+		color: var(--ink-2);
+		font-size: 1.0625rem;
+		line-height: 1.65;
+	}
+
+	/* -------------------------------------------------------------- timeline */
+
+	/* Room below for the cards, which open downwards. */
+	.timeline {
+		margin-top: clamp(56px, 7vw, 96px);
+		padding-block: 28px clamp(24px, 5vw, 72px);
 		border-top: 1px solid var(--line);
 	}
 
-	.highlights li {
+	.timeline-title {
+		margin-bottom: 28px;
+		color: var(--ink-3);
+		font-weight: 400;
+	}
+
+	/* A road through the stops, left to right. It fades out after the last
+	   one, which is today. */
+	.stops {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		gap: 6px;
-		padding-block: 22px;
-		border-bottom: 1px solid var(--line);
+		grid-auto-columns: minmax(0, 1fr);
+		grid-auto-flow: column;
 	}
 
-	.highlight-title {
-		font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+	.stop {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		border-radius: 8px;
+	}
+
+	.when {
+		color: var(--ink-3);
+	}
+
+	.when,
+	.what {
+		padding-right: 20px;
+	}
+
+	.road {
+		position: relative;
+		height: 11px;
+	}
+
+	.road::before,
+	.road::after {
+		content: '';
+		position: absolute;
+	}
+
+	.road::before {
+		inset: 5px 0 auto;
+		height: 1px;
+		background: var(--line-strong);
+	}
+
+	.road::after {
+		top: 0;
+		left: 0;
+		width: 11px;
+		height: 11px;
+		border-radius: 50%;
+		background: var(--bg);
+		box-shadow: inset 0 0 0 1.5px var(--ink-3);
+		transition: box-shadow 200ms ease;
+	}
+
+	.stop:last-child .road::before {
+		background: linear-gradient(to right, var(--line-strong), transparent);
+	}
+
+	.stop:last-child .road::after {
+		background: var(--accent);
+		box-shadow: none;
+	}
+
+	.what {
+		font-size: 1.0625rem;
 		font-weight: 500;
-		line-height: 1.15;
-		letter-spacing: -0.03em;
+		line-height: 1.3;
+		letter-spacing: -0.01em;
+		text-wrap: balance;
 	}
 
-	.text {
+	/* Details open in a card under the stop on hover or focus. */
+	.details {
+		position: absolute;
+		top: calc(100% + 14px);
+		left: 0;
+		z-index: 3;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		width: max-content;
+		max-width: min(320px, 80vw);
+		padding: 14px 16px;
+		border-radius: 14px;
+		background: var(--bg);
+		box-shadow:
+			var(--pill-shadow),
+			inset 0 0 0 1px var(--pill-line);
 		color: var(--ink-2);
+		font-size: 0.875rem;
+		line-height: 1.45;
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(-4px) scale(0.97);
+		transform-origin: top left;
+		transition:
+			opacity 150ms ease,
+			transform 150ms var(--ease-out);
+	}
+
+	/* Bridges the gap, so the pointer can move onto the card. */
+	.details::before {
+		content: '';
+		position: absolute;
+		inset: -14px 0 100%;
+	}
+
+	.details li:first-child {
+		color: var(--ink);
+	}
+
+	/* The last stops open leftwards, so their cards stay on the page. */
+	.stop:nth-last-child(-n + 2) .details {
+		right: 0;
+		left: auto;
+		transform-origin: top right;
+	}
+
+	.stop:is(:hover, :focus):not([data-dismissed]) .details {
+		opacity: 1;
+		pointer-events: auto;
+		transform: none;
+		transition-duration: 200ms;
+	}
+
+	.stop:is(:hover, :focus):not(:last-child) .road::after {
+		box-shadow: inset 0 0 0 1.5px var(--ink);
+	}
+
+	.stop:focus {
+		outline: none;
+	}
+
+	.stop:focus-visible .what {
+		text-decoration: underline;
+		text-decoration-color: var(--line-strong);
+		text-underline-offset: 4px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.details {
+			transform: none;
+		}
 	}
 
 	@media (max-width: 860px) {
 		.about-grid {
 			grid-template-columns: minmax(0, 1fr);
+		}
+
+		/* Top to bottom on narrow screens, with every stop's details shown. */
+		.stops {
+			grid-auto-flow: row;
+		}
+
+		.stop {
+			display: grid;
+			grid-template-columns: 3rem 11px minmax(0, 1fr);
+			column-gap: 16px;
+			row-gap: 8px;
+			padding-bottom: 28px;
+		}
+
+		.when,
+		.what {
+			padding-right: 0;
+		}
+
+		.when {
+			grid-area: 1 / 1;
+			padding-top: 0.15em;
+		}
+
+		.what {
+			grid-area: 1 / 3;
+		}
+
+		.road {
+			grid-area: 1 / 2 / span 2;
+			height: auto;
+		}
+
+		.road::before {
+			inset: 5px auto -28px 5px;
+			width: 1px;
+			height: auto;
+		}
+
+		.road::after {
+			top: 0.3em;
+		}
+
+		.stop:last-child .road::before {
+			bottom: 0;
+			background: linear-gradient(var(--line-strong), transparent);
+		}
+
+		.details,
+		.stop:nth-last-child(-n + 2) .details {
+			position: static;
+			grid-area: 2 / 3;
+			width: auto;
+			max-width: none;
+			padding: 0;
+			background: none;
+			box-shadow: none;
+			opacity: 1;
+			pointer-events: auto;
+			transform: none;
+		}
+
+		.details li:first-child {
+			color: var(--ink-2);
 		}
 	}
 </style>
