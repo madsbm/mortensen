@@ -38,13 +38,13 @@ import CanvasFx from './CanvasFx.astro';
 		/* Where the text starts: the content edge of a .container. */
 		--text-edge: max(var(--gutter), (100% - var(--max)) / 2);
 		/* Mask layers used by backdrop.ts. Digits may only stand out in the
-		   margins (fading in across the gutter) and away from the rail. */
+		   margins (fading in gently from the text edge) and away from the rail. */
 		--backdrop-margins: linear-gradient(
 			to right,
-			#000 calc(var(--text-edge) - 72px),
-			transparent calc(var(--text-edge) - 16px),
-			transparent calc(100% - var(--text-edge) + 16px),
-			#000 calc(100% - var(--text-edge) + 72px)
+			#000 calc(var(--text-edge) - 160px),
+			transparent var(--text-edge),
+			transparent calc(100% - var(--text-edge)),
+			#000 calc(100% - var(--text-edge) + 160px)
 		);
 		--backdrop-rail: linear-gradient(#000 0 0);
 
@@ -80,15 +80,15 @@ import CanvasFx from './CanvasFx.astro';
 
 	/* The effect boosts glyph contrast for legibility; here the digits are
 	   texture, so they're knocked back. Without mask compositing they all get
-	   the faintest level (0.4 × FAINT in backdrop.ts). */
+	   the faintest level (0.22 × FAINT in backdrop.ts). */
 	.backdrop :global(.backdrop-fx .fx-output) {
 		z-index: 2;
-		opacity: 0.024;
+		opacity: 0.035;
 	}
 
 	@supports (mask-composite: intersect) {
 		.backdrop :global(.backdrop-fx .fx-output) {
-			opacity: 0.4;
+			opacity: 0.22;
 			mask-image: var(--backdrop-mask);
 			mask-composite: var(--backdrop-composite);
 		}
