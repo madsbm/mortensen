@@ -12,20 +12,40 @@ npm run build    # outputs to dist/
 
 ```text
 src/
-├── content/projects/   One Markdown file per project; `order` sets its place in the list
-├── content.config.ts   Project frontmatter schema
+├── content/
+│   ├── projects/<id>.yaml         Order, status, cover and links for each project
+│   └── writeups/<lang>/<id>.md    The write-up for a project in one language
+├── content.config.ts   Schemas for both collections
+├── i18n/
+│   ├── config.ts       Languages, localised slugs and path helpers
+│   └── ui.ts           Every interface string, per language
 ├── components/
-│   ├── Header.astro    The pill header and its breadcrumb slugs
+│   ├── pages/          HomePage and ProjectPage, rendered once per language
+│   ├── Header.astro    The pill header, breadcrumb slugs and language switch
 │   ├── ProjectCover.astro + covers/   HTML-drawn project covers
 │   ├── CanvasFx.astro  Wraps live HTML in a Canvas UI effect
 │   ├── BinaryBackdrop.astro   The binary layer behind every page
 │   └── ContactForm.astro
-├── layouts/Base.astro  Page shell, fonts and view transition scoping
+├── pages/              Thin routes: / and /work/<id>, /da/ and /da/arbejde/<id>
+├── layouts/Base.astro  Page shell, fonts, language redirect, view transition scoping
 ├── lib/canvasui/       Vendored Canvas UI effects (see their LICENSE.md)
-├── scripts/            Breadcrumb ticker, effect mounting, contact form
+├── scripts/            Breadcrumb ticker, effect mounting, contact form, language switch
 ├── styles/global.css   Tokens, base styles and view transition animations
 └── site.ts             Name, email, profile links, origin trial token
 ```
+
+To add a project, create `content/projects/<id>.yaml` and a write-up in each language under `content/writeups/`. A missing translation falls back to English.
+
+## Languages
+
+English lives at `/`, Danish at `/da/`, with localised slugs (`/da/arbejde/tos`, `#om`, `#kontakt`). Every page links its counterparts with `hreflang`.
+
+An inline script in `<head>` picks the language before anything renders:
+
+1. A language picked with the switch is remembered and always wins.
+2. Otherwise, a visitor arriving at an English address whose browser prefers Danish is sent to the Danish page.
+
+Danish addresses never redirect on browser preference alone, so shared `/da/` links stay Danish and crawlers can index both languages. The 404 page shows the language of the address that was requested.
 
 ## View transitions
 
