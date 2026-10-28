@@ -1,0 +1,84 @@
+---
+import { Font } from 'astro:assets';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import type { Crumb } from '../lib/types';
+import { site } from '../site';
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+	crumbs?: Crumb[];
+	spy?: boolean;
+	/** The project a case-study page is about. */
+	project?: string;
+}
+
+const { title, description = site.description, crumbs, spy, project } = Astro.props;
+const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.role}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en" data-project={project}>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{fullTitle}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonical} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="theme-color" content="#ffffff" />
+		<meta name="generator" content={Astro.generator} />
+		{site.originTrialToken && <meta http-equiv="origin-trial" content={site.originTrialToken} />}
+
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={fullTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical} />
+		<meta name="twitter:card" content="summary" />
+
+		<Font cssVariable="--font-geist" preload />
+		<Font cssVariable="--font-geist-mono" />
+		<slot name="head" />
+
+		<!--
+			Only the projects on either side of a navigation keep their transition
+			names, so unrelated covers and titles can't fly across the morph. Inline
+			so the listeners exist before the first frame of the new page.
+		-->
+		<script is:inline>
+			(() => {
+				const projectOf = (url) => url && new URL(url).pathname.match(/^\/work\/([^/]+)/)?.[1];
+				const scope = (other, transition) => {
+					const own = document.documentElement.dataset.project;
+					const stripped = [];
+					for (const el of document.querySelectorAll('[data-vt-project]')) {
+						const id = el.dataset.vtProject;
+						if (id === own || id === other) continue;
+						el.style.viewTransitionName = 'none';
+						stripped.push(el);
+					}
+					transition.finished.finally(() => {
+						for (const el of stripped) el.style.viewTransitionName = '';
+					});
+				};
+				addEventListener('pageswap', (event) => {
+					if (event.viewTransition) scope(projectOf(event.activation?.entry?.url), event.viewTransition);
+				});
+				addEventListener('pagereveal', (event) => {
+					if (event.viewTransition) scope(projectOf(window.navigation?.activation?.from?.url), event.viewTransition);
+				});
+			})();
+		</script>
+	</head>
+	<body>
+		<a class="skip" href="#main">Skip to content</a>
+		<Header crumbs={crumbs} spy={spy} />
+		<main id="main">
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>

@@ -1,0 +1,281 @@
+---
+import type { Crumb } from '../lib/types';
+import { site } from '../site';
+
+interface Props {
+	/** Fixed breadcrumb segments, used on project pages. */
+	crumbs?: Crumb[];
+	/** Show a single segment that follows the section in view (home page). */
+	spy?: boolean;
+}
+
+const { crumbs = [], spy = false } = Astro.props;
+---
+
+<header class="site-header">
+	<div class="pill vt" style="--vt: pill">
+		<a class="brand vt" style="--vt: pill-brand" href="/" aria-label={`${site.name}, home`}>
+			<span class="mark" aria-hidden="true"><span></span></span>
+			<span class="brand-full">{site.name}</span>
+			<span class="brand-short" aria-hidden="true">{site.shortName}</span>
+		</a>
+
+		<nav class="crumbs" aria-label="Breadcrumb">
+			<ol>
+				{
+					spy ? (
+						<li class="crumb vt" style="--vt: crumb-1" data-spy>
+							<span class="crumb-inner">
+								<span class="crumb-sep" aria-hidden="true">/</span>
+								<a class="crumb-link" href="/#work">
+									<span class="crumb-text">work</span>
+								</a>
+							</span>
+						</li>
+					) : (
+						crumbs.map((crumb, i) => (
+							<li class="crumb vt" style={`--vt: crumb-${i + 1}`} data-shown>
+								<span class="crumb-inner">
+									<span class="crumb-sep" aria-hidden="true">/</span>
+									<a
+										class="crumb-link"
+										href={crumb.href}
+										aria-current={crumb.current ? 'page' : undefined}
+									>
+										<span class="crumb-text">{crumb.label}</span>
+									</a>
+								</span>
+							</li>
+						))
+					)
+				}
+			</ol>
+		</nav>
+
+		<nav class="links vt" style="--vt: pill-nav" aria-label="Primary">
+			<a class="link" href="/#work">Work</a>
+			<a class="link" href="/#about">About</a>
+			<a class="link link-cta" href="/#contact">Contact</a>
+		</nav>
+	</div>
+</header>
+
+<script>
+	import { followSections } from '../scripts/crumbs';
+	followSections();
+</script>
+
+<style>
+	.site-header {
+		position: fixed;
+		inset: 12px 0 auto;
+		z-index: 40;
+		display: flex;
+		justify-content: center;
+		padding-inline: 12px;
+		pointer-events: none;
+	}
+
+	.pill {
+		display: flex;
+		align-items: center;
+		min-width: 0;
+		max-width: 100%;
+		height: 48px;
+		padding: 4px;
+		border-radius: 999px;
+		background: var(--pill-bg);
+		box-shadow:
+			var(--pill-shadow),
+			inset 0 0 0 1px var(--pill-line);
+		-webkit-backdrop-filter: blur(16px) saturate(180%);
+		backdrop-filter: blur(16px) saturate(180%);
+		font-size: 0.875rem;
+		font-weight: 500;
+		line-height: 1;
+		pointer-events: auto;
+	}
+
+	.brand {
+		display: flex;
+		flex: none;
+		align-items: center;
+		gap: 10px;
+		height: 40px;
+		padding-inline: 8px 4px;
+		border-radius: 999px;
+	}
+
+	/* The site's mark: a terminal block with a prompt cursor. */
+	.mark {
+		display: grid;
+		place-items: end start;
+		width: 22px;
+		height: 22px;
+		padding: 5px;
+		border-radius: 6px;
+		background: var(--ink);
+	}
+
+	.mark span {
+		width: 7px;
+		height: 2.5px;
+		border-radius: 1px;
+		background: var(--accent);
+	}
+
+	.brand-short {
+		display: none;
+	}
+
+	.crumbs {
+		min-width: 0;
+	}
+
+	.crumbs ol {
+		display: flex;
+		align-items: center;
+		min-width: 0;
+	}
+
+	.crumb {
+		display: grid;
+		grid-template-columns: 0fr;
+		min-width: 0;
+		opacity: 0;
+		transition:
+			grid-template-columns 380ms var(--ease-out),
+			opacity 240ms ease;
+	}
+
+	.crumb[data-shown] {
+		grid-template-columns: 1fr;
+		opacity: 1;
+	}
+
+	/* Only shown segments take part in page transitions. */
+	.crumb:not([data-shown]) {
+		view-transition-name: none;
+	}
+
+	.crumb-inner {
+		display: flex;
+		align-items: center;
+		min-width: 0;
+		height: 40px;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.crumb-sep {
+		padding-inline: 0.5em 0.4em;
+		color: var(--line-strong);
+		font-weight: 400;
+	}
+
+	.crumb-link {
+		position: relative;
+		display: inline-grid;
+		align-items: center;
+		min-width: 0;
+		height: 40px;
+		padding-right: 4px;
+		color: var(--ink-3);
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
+		font-weight: 400;
+		transition: color 200ms ease;
+	}
+
+	.crumb-link > :global(.crumb-text) {
+		grid-area: 1 / 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.crumb-link[aria-current='page'] {
+		color: var(--ink);
+	}
+
+	.links {
+		display: flex;
+		flex: none;
+		align-items: center;
+		gap: 2px;
+		margin-left: 14px;
+		padding-left: 6px;
+		border-left: 1px solid var(--line);
+	}
+
+	.link {
+		display: inline-flex;
+		align-items: center;
+		height: 40px;
+		padding-inline: 14px;
+		border-radius: 999px;
+		color: var(--ink-2);
+		transition:
+			background-color 200ms ease,
+			color 200ms ease,
+			transform 160ms var(--ease-out);
+	}
+
+	.link:active {
+		transform: scale(0.97);
+	}
+
+	.link-cta {
+		background: var(--ink);
+		color: var(--bg);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.link:not(.link-cta):hover,
+		.brand:hover {
+			background: rgb(11 11 12 / 0.05);
+			color: var(--ink);
+		}
+
+		.link-cta:hover {
+			background: #26262a;
+		}
+
+		.crumb-link:hover {
+			color: var(--ink);
+		}
+	}
+
+	@media (max-width: 680px) {
+		.brand-full {
+			display: none;
+		}
+
+		.brand-short {
+			display: inline;
+		}
+
+		.link:not(.link-cta) {
+			display: none;
+		}
+
+		.links {
+			margin-left: 8px;
+			padding-left: 0;
+			border-left: 0;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.crumb {
+			transition: opacity 200ms ease;
+		}
+	}
+
+	@media (prefers-reduced-transparency: reduce) {
+		.pill {
+			background: var(--bg);
+			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
+		}
+	}
+</style>
