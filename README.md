@@ -1,43 +1,46 @@
-# Astro Starter Kit: Minimal
+# madsbechmortensen.dk
+
+Personal portfolio built with [Astro](https://astro.build). Static output, no client framework.
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install
+npm run dev      # or: astro dev --background
+npm run build    # outputs to dist/
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## Structure
 
 ```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+src/
+├── content/projects/   One Markdown file per project; `order` sets its place in the list
+├── content.config.ts   Project frontmatter schema
+├── components/
+│   ├── Header.astro    The pill header and its breadcrumb slugs
+│   ├── ProjectCover.astro + covers/   HTML-drawn project covers
+│   ├── CanvasFx.astro  Wraps live HTML in a Canvas UI effect
+│   └── ContactForm.astro
+├── layouts/Base.astro  Page shell, fonts and view transition scoping
+├── lib/canvasui/       Vendored Canvas UI effects (see their LICENSE.md)
+├── scripts/            Breadcrumb ticker, effect mounting, contact form
+├── styles/global.css   Tokens, base styles and view transition animations
+└── site.ts             Name, email, profile links, origin trial token
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## View transitions
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Navigation uses native cross-document view transitions (`@view-transition { navigation: auto }`), so there's no client router. A project's number, title and cover carry the same `view-transition-name` on the home page and its case-study page, so opening a project morphs it into place. The pill header is a transition group of its own: a new slug slides in, and switching projects ticks the slug over.
 
-Any static assets, like images, can be placed in the `public/` directory.
+Transition names are only applied under `prefers-reduced-motion: no-preference`. With reduced motion, pages simply crossfade.
 
-## 🧞 Commands
+## HTML-in-Canvas effects
 
-All commands are run from the root of the project, from a terminal:
+Two [Canvas UI](https://canvasui.dev) effects run on the experimental [HTML-in-Canvas API](https://developer.chrome.com/docs/web-platform/html-in-canvas/2d):
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+- **Glass**: a lens that follows the cursor over the hero and magnifies the headline.
+- **Ripple**: one ripple across the contact form when it opens your mail app.
 
-## 👀 Want to learn more?
+Both are native-only. Without the API the page renders as plain HTML and nothing is lost. To see them now, enable `chrome://flags/#canvas-draw-element`. To turn them on for visitors, register for the Chrome origin trial and paste the token into `originTrialToken` in `src/site.ts`.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Contact form
+
+The form doesn't send anything; it opens a prefilled email in the visitor's mail app. The address never appears in the HTML or JS: it's XOR-encoded at build time with a random key and only decoded in handlers for real user clicks.
