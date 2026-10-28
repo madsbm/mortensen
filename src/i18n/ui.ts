@@ -48,13 +48,9 @@ const en = {
 		title: 'About',
 		position: 'Software Engineer at Side-Walk ApS',
 		lead: 'I like problems where correctness and performance both matter, and I like owning them end to end.',
-		paragraphs: [
-			'At Side-Walk I work across the whole lifecycle: architecture, implementation, deployment, maintenance and optimisation. That includes independent audits and takeovers of unfamiliar codebases for larger companies, and performance work on web applications, databases and game servers.',
-			'I also designed and rolled out zero-trust access for our internal systems, built on identity-based access control, automated provisioning, mTLS and short-lived SSH certificates.',
-		],
 		timeline: {
 			title: 'Timeline',
-			// The details show on hover. An event can have none.
+			// The details show on hover, or under each stop on touch screens.
 			events: [
 				{
 					when: '2018',
@@ -102,6 +98,8 @@ const en = {
 					],
 				},
 			],
+			// The open stop at the end.
+			next: { when: 'Next', title: 'Your idea here?', link: 'Get in touch' },
 		},
 	},
 	contact: {
@@ -224,10 +222,6 @@ const da: Dictionary = {
 		title: 'Om mig',
 		position: 'Softwareudvikler hos Side-Walk ApS',
 		lead: 'Jeg kan lide problemer, hvor både korrekthed og ydeevne betyder noget, og jeg kan lide at eje dem fra start til slut.',
-		paragraphs: [
-			'Hos Side-Walk arbejder jeg på tværs af hele livscyklussen: arkitektur, implementering, deployment, vedligeholdelse og optimering. Det omfatter selvstændige gennemgange og overtagelser af ukendte kodebaser for større virksomheder samt performancearbejde på webapplikationer, databaser og spilservere.',
-			'Jeg har også designet og udrullet zero trust-adgang til vores interne systemer, bygget på identitetsbaseret adgangskontrol, automatisk provisionering, mTLS og kortlivede SSH-certifikater.',
-		],
 		timeline: {
 			title: 'Tidslinje',
 			events: [
@@ -277,6 +271,7 @@ const da: Dictionary = {
 					],
 				},
 			],
+			next: { when: 'Næste', title: 'Din idé her?', link: 'Kontakt mig' },
 		},
 	},
 	contact: {
