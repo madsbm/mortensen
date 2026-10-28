@@ -50,6 +50,22 @@ const person = JSON.stringify({
 		</div>
 	</section>
 
+	<section class="container section" aria-labelledby="skills-title">
+		<div class="section-head">
+			<h2 id="skills-title">{t.skills.title}</h2>
+		</div>
+		<dl class="skills">
+			{
+				t.skills.groups.map((row) => (
+					<div>
+						<dt class="mono">{row.group}</dt>
+						<dd>{row.items.join(', ')}</dd>
+					</div>
+				))
+			}
+		</dl>
+	</section>
+
 	<section id={slug.work} class="container section" data-section={slug.work} aria-labelledby="work-title">
 		<div class="section-head">
 			<h2 id="work-title">{t.work.title}</h2>
@@ -119,17 +135,6 @@ const person = JSON.stringify({
 				}
 			</ul>
 		</div>
-
-		<dl class="toolkit">
-			{
-				t.about.toolkit.map((row) => (
-					<div>
-						<dt class="mono">{row.group}</dt>
-						<dd>{row.items.join(', ')}</dd>
-					</div>
-				))
-			}
-		</dl>
 	</section>
 
 	<!-- The page lifts off this sheet, so the footer sits on it too. -->
@@ -301,6 +306,42 @@ const person = JSON.stringify({
 			position: sticky;
 			top: 0;
 			bottom: 0;
+		}
+	}
+
+	/* --------------------------------------------------------------- skills */
+
+	.skills {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 32px;
+		padding-top: clamp(24px, 3vw, 36px);
+	}
+
+	.skills div {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.skills dt {
+		color: var(--ink-3);
+	}
+
+	.skills dd {
+		color: var(--ink);
+		line-height: 1.6;
+	}
+
+	@media (max-width: 1100px) {
+		.skills {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 560px) {
+		.skills {
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 
@@ -519,33 +560,8 @@ const person = JSON.stringify({
 		color: var(--ink-2);
 	}
 
-	.toolkit {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 32px;
-		margin-top: clamp(48px, 6vw, 80px);
-		padding-top: 28px;
-		border-top: 1px solid var(--line);
-	}
-
-	.toolkit div {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.toolkit dt {
-		color: var(--ink-3);
-	}
-
-	.toolkit dd {
-		color: var(--ink);
-		line-height: 1.6;
-	}
-
 	@media (max-width: 860px) {
-		.about-grid,
-		.toolkit {
+		.about-grid {
 			grid-template-columns: minmax(0, 1fr);
 		}
 	}

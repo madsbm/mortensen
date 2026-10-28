@@ -22,6 +22,21 @@ const en = {
 		work: 'See the work',
 		contact: 'Get in touch',
 	},
+	skills: {
+		title: 'Skills',
+		groups: [
+			{ group: 'Languages', items: ['Rust', 'TypeScript', 'Java', 'PHP', 'C#', 'Python'] },
+			{
+				group: 'Systems',
+				items: ['x86_64', 'Linux', 'Concurrency', 'Memory management', 'Network protocols', 'Binary file formats', 'Reverse engineering'],
+			},
+			{ group: 'Web & apps', items: ['Laravel', 'Vue 3', 'React', 'React Native', 'Netty', 'Redis', 'MariaDB', 'MongoDB'] },
+			{
+				group: 'Infrastructure & security',
+				items: ['Cloudflare Zero Trust', 'Entra ID · OIDC · SCIM', 'mTLS', 'Smallstep SSH', 'Docker', 'Kubernetes', 'NGINX', 'Nix', 'CI/CD'],
+			},
+		],
+	},
 	work: {
 		title: 'Selected work',
 		count: (n: string) => `${n} projects`,
@@ -41,14 +56,6 @@ const en = {
 			{ title: 'Live systems under load', text: 'Reworking production systems so they hold up at high concurrency.' },
 			{ title: 'Platforms a business runs on', text: 'Building and maintaining revenue-critical software, end to end.' },
 			{ title: 'Zero Trust security', text: 'Designing and rolling out identity-based access for internal systems.' },
-		],
-		toolkit: [
-			{ group: 'Systems', items: ['Rust', 'x86_64', 'Linux', 'Memory management', 'Concurrency', 'Network protocols'] },
-			{
-				group: 'Infrastructure & security',
-				items: ['Cloudflare Zero Trust', 'Entra ID · OIDC · SCIM', 'mTLS', 'Smallstep SSH', 'Docker', 'Kubernetes', 'CI/CD'],
-			},
-			{ group: 'Applications', items: ['TypeScript', 'Java · Netty', 'Laravel', 'Databases', 'Performance tuning'] },
 		],
 	},
 	contact: {
@@ -145,6 +152,21 @@ const da: Dictionary = {
 		work: 'Se mit arbejde',
 		contact: 'Kontakt mig',
 	},
+	skills: {
+		title: 'Kompetencer',
+		groups: [
+			{ group: 'Sprog', items: ['Rust', 'TypeScript', 'Java', 'PHP', 'C#', 'Python'] },
+			{
+				group: 'Systemer',
+				items: ['x86_64', 'Linux', 'Concurrency', 'Hukommelseshåndtering', 'Netværksprotokoller', 'Binære filformater', 'Reverse engineering'],
+			},
+			{ group: 'Web & apps', items: ['Laravel', 'Vue 3', 'React', 'React Native', 'Netty', 'Redis', 'MariaDB', 'MongoDB'] },
+			{
+				group: 'Infrastruktur & sikkerhed',
+				items: ['Cloudflare Zero Trust', 'Entra ID · OIDC · SCIM', 'mTLS', 'Smallstep SSH', 'Docker', 'Kubernetes', 'NGINX', 'Nix', 'CI/CD'],
+			},
+		],
+	},
 	work: {
 		title: 'Udvalgt arbejde',
 		count: (n: string) => `${n} projekter`,
@@ -164,17 +186,6 @@ const da: Dictionary = {
 			{ title: 'Livesystemer under pres', text: 'Ombygning af produktionssystemer, så de holder til mange samtidige brugere.' },
 			{ title: 'Platforme, en forretning kører på', text: 'Udvikling og drift af forretningskritisk software fra start til slut.' },
 			{ title: 'Zero trust-sikkerhed', text: 'Design og udrulning af identitetsbaseret adgang til interne systemer.' },
-		],
-		toolkit: [
-			{
-				group: 'Systemer',
-				items: ['Rust', 'x86_64', 'Linux', 'Hukommelseshåndtering', 'Concurrency', 'Netværksprotokoller'],
-			},
-			{
-				group: 'Infrastruktur & sikkerhed',
-				items: ['Cloudflare Zero Trust', 'Entra ID · OIDC · SCIM', 'mTLS', 'Smallstep SSH', 'Docker', 'Kubernetes', 'CI/CD'],
-			},
-			{ group: 'Applikationer', items: ['TypeScript', 'Java · Netty', 'Laravel', 'Databaser', 'Performanceoptimering'] },
 		],
 	},
 	contact: {
