@@ -3,20 +3,21 @@
 // and picks blank, 1 or 0 from how strongly it differs. The canvas itself is
 // never seen; its tones only decide which digit lands in each cell.
 //
-// Per-cell noise gives a scattered mix of 1s and 0s. Accent shapes along the
-// edges of the screen tint the digits there, and the same shapes mask the
-// effect's output, so digits fade out towards the centre where the text is.
+// Per-cell noise gives a scattered mix of 1s and 0s. Accent shapes in the
+// margins tint the digits there, and the same shapes mask the effect's
+// output: digits only stand out inside a shape, outside the text column and
+// clear of the profile rail. Everywhere else they stay at the faintest level.
 
 const NOISE = 0.4;
 const ACCENT = '255 79 31';
-// Digits left showing in the middle of the screen, as a fraction of the edges.
-const CENTRE = 0.06;
+// The faintest level, as a fraction of the strongest.
+const FAINT = 0.06;
 // Positions are fractions of the screen, radii fractions of its longer side.
+// The rail sits bottom left, so that corner is left out.
 const shapes = [
-	{ x: 0, y: 0.14, r: 0.42, alpha: 0.5 },
-	{ x: 1, y: 0.32, r: 0.46, alpha: 0.55 },
-	{ x: 0.1, y: 1, r: 0.44, alpha: 0.5 },
-	{ x: 0.9, y: 1, r: 0.38, alpha: 0.45 },
+	{ x: 0, y: 0.18, r: 0.42, alpha: 0.5 },
+	{ x: 1, y: 0.28, r: 0.46, alpha: 0.55 },
+	{ x: 1, y: 0.92, r: 0.38, alpha: 0.45 },
 ];
 
 export function paintBackdrop() {
@@ -25,15 +26,20 @@ export function paintBackdrop() {
 	const root = canvas?.closest<HTMLElement>('[data-fx-options]');
 	if (!canvas || !ctx || !root) return;
 
-	root.style.setProperty(
-		'--backdrop-mask',
-		[
-			...shapes.map(
-				({ x, y, r }) => `radial-gradient(circle ${r * 100}vmax at ${x * 100}% ${y * 100}%, #000, transparent)`,
-			),
-			`linear-gradient(rgb(0 0 0 / ${CENTRE}) 0 0)`,
-		].join(', '),
-	);
+	// Mask layers, top first, each composited onto the result of those below:
+	// the shapes are unioned, cut to the margins (BinaryBackdrop.astro defines
+	// those layers), and the faint level is added over everything.
+	const layers = [
+		[`linear-gradient(rgb(0 0 0 / ${FAINT}) 0 0)`, 'add'],
+		['var(--backdrop-margins)', 'intersect'],
+		['var(--backdrop-rail)', 'intersect'],
+		...shapes.map(({ x, y, r }) => [
+			`radial-gradient(circle ${r * 100}vmax at ${x * 100}% ${y * 100}%, #000, transparent)`,
+			'add',
+		]),
+	];
+	root.style.setProperty('--backdrop-mask', layers.map(([image]) => image).join(', '));
+	root.style.setProperty('--backdrop-composite', layers.map(([, operator]) => operator).join(', '));
 
 	// Match Asciify's glyph cell so every cell samples exactly one noise block.
 	const { scale = 2, spacing = 1 } = JSON.parse(root.dataset.fxOptions ?? '{}');

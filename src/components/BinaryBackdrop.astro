@@ -35,10 +35,31 @@ import CanvasFx from './CanvasFx.astro';
 
 <style>
 	.backdrop {
+		/* Where the text starts: the content edge of a .container. */
+		--text-edge: max(var(--gutter), (100% - var(--max)) / 2);
+		/* Mask layers used by backdrop.ts. Digits may only stand out in the
+		   margins (fading in across the gutter) and away from the rail. */
+		--backdrop-margins: linear-gradient(
+			to right,
+			#000 calc(var(--text-edge) - 72px),
+			transparent calc(var(--text-edge) - 16px),
+			transparent calc(100% - var(--text-edge) + 16px),
+			#000 calc(100% - var(--text-edge) + 72px)
+		);
+		--backdrop-rail: linear-gradient(#000 0 0);
+
 		position: fixed;
 		inset: 0;
 		z-index: -1;
 		pointer-events: none;
+	}
+
+	/* Matches ProfileRail.astro: shown from 1100px, 40px wide and 20px from
+	   the left, about 190px tall. */
+	@media (min-width: 1100px) {
+		.backdrop {
+			--backdrop-rail: radial-gradient(ellipse 160px 420px at 40px 100%, transparent 55%, #000);
+		}
 	}
 
 	.backdrop :global(.backdrop-fx) {
@@ -58,13 +79,19 @@ import CanvasFx from './CanvasFx.astro';
 	}
 
 	/* The effect boosts glyph contrast for legibility; here the digits are
-	   texture, so they're knocked back, and the mask from backdrop.ts keeps
-	   them to the edges of the screen. */
+	   texture, so they're knocked back. Without mask compositing they all get
+	   the faintest level (0.4 × FAINT in backdrop.ts). */
 	.backdrop :global(.backdrop-fx .fx-output) {
 		z-index: 2;
-		opacity: 0.4;
-		-webkit-mask-image: var(--backdrop-mask);
-		mask-image: var(--backdrop-mask);
+		opacity: 0.024;
+	}
+
+	@supports (mask-composite: intersect) {
+		.backdrop :global(.backdrop-fx .fx-output) {
+			opacity: 0.4;
+			mask-image: var(--backdrop-mask);
+			mask-composite: var(--backdrop-composite);
+		}
 	}
 
 	.art {
