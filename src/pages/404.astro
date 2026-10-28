@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Not found" crumbs={[{ label: '404', href: '/404', current: true }]}>
+	<section class="container missing">
+		<p class="mono code">error 404 · page not found</p>
+		<h1>Nothing is mapped at this address.</h1>
+		<p class="note">The page may have moved, or the link was mistyped.</p>
+		<a class="button button-solid" href="/">Back to the start <span class="arrow" aria-hidden="true">→</span></a>
+	</section>
+</Base>
+
+<style>
+	.missing {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+		gap: 24px;
+		min-height: 88svh;
+		padding-top: 120px;
+	}
+
+	.code {
+		color: var(--accent-ink);
+	}
+
+	h1 {
+		max-width: 14ch;
+		font-size: clamp(2.75rem, 7vw, 6rem);
+		font-weight: 500;
+		line-height: 0.95;
+		letter-spacing: -0.05em;
+	}
+
+	.note {
+		color: var(--ink-2);
+		font-size: 1.125rem;
+	}
+</style>
