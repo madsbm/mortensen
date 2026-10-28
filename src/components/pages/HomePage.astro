@@ -262,11 +262,6 @@ const person = JSON.stringify({
 		background: radial-gradient(circle at 0 0, var(--curve));
 	}
 
-	/* Clips the content to the page's edge without becoming a scroll
-	   container, so the content's view timeline still follows the page. */
-	.sheet-window {
-		overflow: clip;
-	}
 
 	/* Sized by the screen's height, so the sheet fits on a laptop and the
 	   reveal can end exactly at the bottom of the page. */
@@ -282,28 +277,37 @@ const person = JSON.stringify({
 		}
 	}
 
-	/* Parallax: the page lifts off the sheet. The sheet's content is held
-	   still at the spot it settles in, while the page's edge slides up past
-	   it. The range ends once the sheet has fully come into view (the bottom
-	   of the page), or, if it's taller than the screen, once its top reaches
-	   the top of the screen; after that it scrolls normally. */
-	@media (prefers-reduced-motion: no-preference) {
-		@supports (animation-timeline: view()) {
-			.sheet-content {
-				animation-name: sheet-reveal;
-				animation-timing-function: linear;
-				animation-fill-mode: both;
-				animation-timeline: view(block 0px);
-				animation-range: entry 0% entry 100%;
-			}
-		}
-	}
+	/* Parallax: the page lifts off the sheet. The content is sticky to both
+	   edges of the screen, so while the page's edge slides up past it, it
+	   holds still where it ends up: against the bottom of the screen if it
+	   fits, else against the top (top wins), after which it scrolls normally.
+	   Sticky positioning moves in step with scrolling, unlike an animation.
 
-	/* Up by the scroll distance of that range, so it holds still: its own
-	   height, or the screen's if that's less. */
-	@keyframes sheet-reveal {
-		from {
-			translate: 0 calc(-1 * min(100%, 100vh));
+	   To have room to hold still, the window reaches a screen's height up
+	   under the page (an empty spacer the content can rise into), and that
+	   part is clipped away so the content only shows below the page's edge.
+	   The sheet is its own formatting context so the window's negative
+	   margin doesn't pull the sheet up with it. */
+	@media (prefers-reduced-motion: no-preference) {
+		.sheet {
+			display: flow-root;
+		}
+
+		.sheet-window {
+			margin-top: -100vh;
+			clip-path: inset(100vh 0 0 0);
+		}
+
+		.sheet-window::before {
+			content: '';
+			display: block;
+			height: 100vh;
+		}
+
+		.sheet-content {
+			position: sticky;
+			top: 0;
+			bottom: 0;
 		}
 	}
 
