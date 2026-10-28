@@ -1,16 +1,10 @@
 ---
-order: 3
 title: PacketPlots
 tagline: Per-player plots in one shared Minecraft world, virtualised at the packet level.
 summary: A Java and Netty system that rewrites the Minecraft protocol per connection, so every player gets their own plot inside a world everyone shares.
 tags: [Java, Netty, Protocols]
 role: Solo project
-status: Complete
 stack: [Java, Netty, Minecraft protocol]
-cover: packetplots
-links:
-  - label: Source on GitHub
-    href: https://github.com/madsbm/PacketPlots
 ---
 
 ## The idea

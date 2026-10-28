@@ -1,0 +1,465 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCover from '../ProjectCover.astro';
+import ProjectStatus from '../ProjectStatus.astro';
+import ContactForm from '../ContactForm.astro';
+import { projectPath, sections, type Lang } from '../../i18n/config';
+import { useTranslations } from '../../i18n/ui';
+import { getProjects, pad } from '../../lib/projects';
+import { site } from '../../site';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const slug = sections[lang];
+const projects = await getProjects(lang);
+
+// Structured data for search engines. The email address stays out of it.
+const person = JSON.stringify({
+	'@context': 'https://schema.org',
+	'@type': 'Person',
+	name: site.name,
+	url: Astro.site,
+	jobTitle: t.meta.role,
+	worksFor: { '@type': 'Organization', name: 'Side-Walk ApS' },
+	address: { '@type': 'PostalAddress', addressCountry: 'DK' },
+	sameAs: site.links.map((link) => link.href),
+});
+---
+
+<Base lang={lang} spy>
+	<script slot="head" type="application/ld+json" set:html={person} />
+	<section class="hero" aria-labelledby="hero-title">
+		<div class="container hero-inner">
+			<p class="eyebrow mono"><span class="dot" aria-hidden="true"></span>{t.hero.eyebrow}</p>
+			<h1 id="hero-title" class="display">
+				{t.hero.line1}<br />
+				<span class="muted">{t.hero.line2}</span>
+			</h1>
+			<div class="hero-foot">
+				<p class="lede">{t.hero.lede}</p>
+				<div class="actions">
+					<a class="button button-solid" href={`#${slug.work}`}>
+						{t.hero.work} <span class="arrow" aria-hidden="true">↓</span>
+					</a>
+					<a class="button button-ghost" href={`#${slug.contact}`}>{t.hero.contact}</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id={slug.work} class="container section" data-section={slug.work} aria-labelledby="work-title">
+		<div class="section-head">
+			<h2 id="work-title">{t.work.title}</h2>
+			<span class="mono">{t.work.count(pad(projects.length))}</span>
+		</div>
+
+		<ol class="projects">
+			{
+				projects.map((project) => (
+					<li class="project">
+						<span class="num mono vt" style={`--vt: num-${project.id}`} data-vt-project={project.id}>
+							{pad(project.order)}
+						</span>
+						<div class="project-text">
+							<h3 class="project-title">
+								<a href={projectPath(lang, project.id)}>
+									<span class="vt" style={`--vt: title-${project.id}`} data-vt-project={project.id}>
+										{project.title}
+									</span>
+								</a>
+							</h3>
+							<ProjectStatus lang={lang} status={project.status} />
+							<p class="tagline">{project.tagline}</p>
+							<ul class="tags mono" aria-label={t.work.topics}>
+								{project.tags.map((tag) => <li>{tag}</li>)}
+							</ul>
+							<div class="actions-row">
+								<span class="open" aria-hidden="true">
+									{t.work.open} <span class="arrow">→</span>
+								</span>
+								{project.links.map((link) => (
+									<a class="source mono" href={link.href} rel="noopener">
+										{t.project.source} ↗
+									</a>
+								))}
+							</div>
+						</div>
+						<ProjectCover lang={lang} id={project.id} kind={project.cover} class="project-cover" />
+					</li>
+				))
+			}
+		</ol>
+	</section>
+
+	<section id={slug.about} class="container section" data-section={slug.about} aria-labelledby="about-title">
+		<div class="section-head">
+			<h2 id="about-title">{t.about.title}</h2>
+			<span class="mono">{t.about.position}</span>
+		</div>
+
+		<div class="about-grid">
+			<div class="bio">
+				<p class="bio-lead">{t.about.lead}</p>
+				{t.about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+				<p class="mono tenure">{t.about.tenure}</p>
+			</div>
+
+			<ul class="highlights">
+				{
+					t.about.highlights.map((item) => (
+						<li>
+							<span class="highlight-title">{item.title}</span>
+							<span class="text">{item.text}</span>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+
+		<dl class="toolkit">
+			{
+				t.about.toolkit.map((row) => (
+					<div>
+						<dt class="mono">{row.group}</dt>
+						<dd>{row.items.join(', ')}</dd>
+					</div>
+				))
+			}
+		</dl>
+	</section>
+
+	<section id={slug.contact} class="container section" data-section={slug.contact} aria-labelledby="contact-title">
+		<div class="section-head">
+			<h2 id="contact-title">{t.contact.title}</h2>
+			<span class="mono">{t.contact.location}</span>
+		</div>
+		<ContactForm lang={lang} />
+	</section>
+</Base>
+
+<style>
+	/* ---------------------------------------------------------------- hero */
+
+	.hero-inner {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		gap: clamp(28px, 4vw, 48px);
+		min-height: 100svh;
+		padding-top: 120px;
+		padding-bottom: clamp(40px, 7vh, 88px);
+	}
+
+	@media (min-width: 768px) {
+		.hero-inner {
+			min-height: clamp(640px, 100svh, 980px);
+		}
+	}
+
+	.eyebrow {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		color: var(--ink-2);
+	}
+
+	.dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--accent);
+	}
+
+	.display {
+		font-size: clamp(3rem, 8.4vw, 7.5rem);
+		font-weight: 500;
+		line-height: 0.94;
+		letter-spacing: -0.05em;
+		text-wrap: balance;
+	}
+
+	.muted {
+		color: var(--ink-3);
+	}
+
+	.hero-foot {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 28px 48px;
+		padding-top: clamp(24px, 3vw, 36px);
+		border-top: 1px solid var(--line);
+	}
+
+	.lede {
+		max-width: 52ch;
+		color: var(--ink-2);
+		font-size: clamp(1.0625rem, 1.3vw, 1.1875rem);
+		line-height: 1.55;
+		text-wrap: pretty;
+	}
+
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
+	/* ------------------------------------------------------------- sections */
+
+	.section {
+		padding-top: clamp(72px, 10vw, 140px);
+	}
+
+	.section:last-of-type {
+		padding-bottom: clamp(72px, 10vw, 140px);
+	}
+
+	/* ------------------------------------------------------------- projects */
+
+	.project {
+		position: relative;
+		display: grid;
+		grid-template-columns: 4.5rem minmax(0, 1fr) minmax(0, 1.3fr);
+		gap: clamp(20px, 3vw, 40px);
+		padding-block: clamp(28px, 4vw, 48px);
+		border-bottom: 1px solid var(--line);
+	}
+
+	.num {
+		align-self: start;
+		padding-top: 0.9em;
+		color: var(--ink-3);
+		transition: color 200ms ease;
+	}
+
+	.project-text {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+	}
+
+	.project-title {
+		font-size: clamp(2.25rem, 4.6vw, 3.75rem);
+		font-weight: 500;
+		line-height: 1;
+		letter-spacing: -0.045em;
+	}
+
+	.project-title span {
+		display: inline-block;
+	}
+
+	/* The title link covers the whole row. */
+	.project-title a::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+	}
+
+	.project-title a:focus-visible {
+		outline: none;
+	}
+
+	.project:has(a:focus-visible) {
+		outline: 2px solid var(--focus);
+		outline-offset: 6px;
+		border-radius: 8px;
+	}
+
+	.tagline {
+		max-width: 30ch;
+		color: var(--ink-2);
+		font-size: 1.125rem;
+		line-height: 1.45;
+		text-wrap: pretty;
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
+	.tags li {
+		padding: 4px 10px;
+		border: 1px solid var(--line);
+		border-radius: 999px;
+		color: var(--ink-2);
+		font-size: 0.75rem;
+	}
+
+	.actions-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 8px 24px;
+		margin-top: auto;
+		padding-top: 12px;
+	}
+
+	.open {
+		display: inline-flex;
+		gap: 8px;
+		font-size: 0.9375rem;
+		font-weight: 500;
+	}
+
+	/* Sits above the row-wide case study link. */
+	.source {
+		position: relative;
+		z-index: 2;
+		color: var(--ink-3);
+		font-size: 0.75rem;
+		text-decoration: underline;
+		text-decoration-color: transparent;
+		text-underline-offset: 3px;
+		transition:
+			color 200ms ease,
+			text-decoration-color 200ms ease;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.source:hover {
+			color: var(--ink);
+			text-decoration-color: currentColor;
+		}
+	}
+
+	.open .arrow,
+	.project :global(.project-cover .frame) {
+		transition: transform 300ms var(--ease-out);
+	}
+
+	.project:active :global(.project-cover .frame) {
+		transform: scale(0.99);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.project:hover .num {
+			color: var(--accent-ink);
+		}
+
+		.project:hover .open .arrow {
+			transform: translateX(3px);
+		}
+
+		.project:hover :global(.project-cover .frame) {
+			transform: scale(1.012);
+		}
+	}
+
+	@media (max-width: 900px) {
+		.project {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 18px;
+		}
+
+		.num {
+			padding-top: 0;
+		}
+
+		.project :global(.project-cover) {
+			order: -1;
+		}
+	}
+
+	/* ---------------------------------------------------------------- about */
+
+	.about-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+		gap: clamp(40px, 6vw, 96px);
+		padding-top: clamp(32px, 4vw, 48px);
+	}
+
+	.bio {
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
+		color: var(--ink-2);
+		font-size: 1.0625rem;
+		line-height: 1.65;
+	}
+
+	.bio-lead {
+		max-width: 22ch;
+		color: var(--ink);
+		font-size: clamp(1.625rem, 2.8vw, 2.25rem);
+		line-height: 1.12;
+		letter-spacing: -0.03em;
+		font-weight: 500;
+	}
+
+	.bio p:not(.bio-lead, .tenure) {
+		max-width: 60ch;
+	}
+
+	.tenure {
+		color: var(--ink-3);
+	}
+
+	.highlights {
+		display: flex;
+		flex-direction: column;
+		align-self: start;
+		border-top: 1px solid var(--line);
+	}
+
+	.highlights li {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 6px;
+		padding-block: 22px;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.highlight-title {
+		font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+		font-weight: 500;
+		line-height: 1.15;
+		letter-spacing: -0.03em;
+	}
+
+	.text {
+		color: var(--ink-2);
+	}
+
+	.toolkit {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 32px;
+		margin-top: clamp(48px, 6vw, 80px);
+		padding-top: 28px;
+		border-top: 1px solid var(--line);
+	}
+
+	.toolkit div {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.toolkit dt {
+		color: var(--ink-3);
+	}
+
+	.toolkit dd {
+		color: var(--ink);
+		line-height: 1.6;
+	}
+
+	@media (max-width: 860px) {
+		.about-grid,
+		.toolkit {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+</style>

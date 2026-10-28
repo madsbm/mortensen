@@ -1,11 +1,8 @@
 ---
-order: 2
 title: Relay
 tagline: An AI engineering assistant with persistent memory, so it keeps learning the longer you use it.
 summary: Relay is an assistant for software teams in the vein of GitLab Duo, built around persistent memory. It learns from past work over time and takes in tasks from email, Jira and other sources.
 tags: [AI agents, Memory, Integrations]
-status: In development
-cover: relay
 ---
 
 ## The idea

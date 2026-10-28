@@ -1,34 +1,38 @@
 ---
 import type { Crumb } from '../lib/types';
+import { homePath, sectionPath, sections, type Lang } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
 import { site } from '../site';
 
 interface Props {
+	lang: Lang;
 	/** Fixed breadcrumb segments, used on project pages. */
 	crumbs?: Crumb[];
 	/** Show a single segment that follows the section in view (home page). */
 	spy?: boolean;
 }
 
-const { crumbs = [], spy = false } = Astro.props;
+const { lang, crumbs = [], spy = false } = Astro.props;
+const t = useTranslations(lang);
 ---
 
 <header class="site-header">
 	<div class="pill vt" style="--vt: pill">
-		<a class="brand vt" style="--vt: pill-brand" href="/" aria-label={`${site.name}, home`}>
+		<a class="brand vt" style="--vt: pill-brand" href={homePath(lang)} aria-label={t.nav.home(site.name)}>
 			<span class="mark" aria-hidden="true"><span></span></span>
 			<span class="brand-full">{site.name}</span>
 			<span class="brand-short" aria-hidden="true">{site.shortName}</span>
 		</a>
 
-		<nav class="crumbs" aria-label="Breadcrumb">
+		<nav class="crumbs" aria-label={t.nav.breadcrumb}>
 			<ol>
 				{
 					spy ? (
 						<li class="crumb vt" style="--vt: crumb-1" data-spy>
 							<span class="crumb-inner">
 								<span class="crumb-sep" aria-hidden="true">/</span>
-								<a class="crumb-link" href="/#work">
-									<span class="crumb-text">work</span>
+								<a class="crumb-link" href={sectionPath(lang, 'work')}>
+									<span class="crumb-text">{sections[lang].work}</span>
 								</a>
 							</span>
 						</li>
@@ -52,10 +56,10 @@ const { crumbs = [], spy = false } = Astro.props;
 			</ol>
 		</nav>
 
-		<nav class="links vt" style="--vt: pill-nav" aria-label="Primary">
-			<a class="link" href="/#work">Work</a>
-			<a class="link" href="/#about">About</a>
-			<a class="link link-cta" href="/#contact">Contact</a>
+		<nav class="links vt" style="--vt: pill-nav" aria-label={t.nav.primary}>
+			<a class="link" href={sectionPath(lang, 'work')}>{t.nav.work}</a>
+			<a class="link" href={sectionPath(lang, 'about')}>{t.nav.about}</a>
+			<a class="link link-cta" href={sectionPath(lang, 'contact')}>{t.nav.contact}</a>
 		</nav>
 	</div>
 </header>

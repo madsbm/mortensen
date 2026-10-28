@@ -33,7 +33,7 @@ export function followSections() {
 			return;
 		}
 
-		link!.href = `/#${slug}`;
+		link!.href = `#${slug}`;
 		if (!previous || reducedMotion.matches) {
 			setText(slug);
 			crumb!.dataset.shown = '';
@@ -94,7 +94,7 @@ export function followSections() {
 	if (initial) {
 		current = initial;
 		setText(initial);
-		link.href = `/#${initial}`;
+		link.href = `#${initial}`;
 		crumb.style.transition = 'none';
 		crumb.dataset.shown = '';
 		crumb.offsetWidth;

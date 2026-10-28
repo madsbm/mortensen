@@ -1,30 +1,35 @@
 ---
+import type { Lang } from '../../i18n/config';
+import { useTranslations } from '../../i18n/ui';
+
+interface Props {
+	lang: Lang;
+}
+
 // A stylised phone screen showing Lectimate's main views. Placeholder content,
 // not a screenshot.
-const lessons = [
-	{ time: '08:15', name: 'Mathematics', room: 'Room 204' },
-	{ time: '10:00', name: 'Physics', room: 'Lab 2', now: true },
-	{ time: '12:30', name: 'Danish', room: 'Room 117' },
-];
+const ui = useTranslations(Astro.props.lang);
+const t = ui.covers.lectimate;
+const NOW = 1; // the lesson highlighted as in progress
 ---
 
 <div class="lectimate" aria-hidden="true">
 	<div class="stat">
-		<span class="num">1,000+</span>
-		<span class="label">students used it</span>
-		<span class="retired">Discontinued</span>
+		<span class="num">{t.count}</span>
+		<span class="label">{t.users}</span>
+		<span class="retired">{ui.status.discontinued}</span>
 	</div>
 
 	<div class="phone">
 		<div class="screen">
 			<div class="head">
-				<span class="day">Tuesday</span>
+				<span class="day">{t.day}</span>
 				<span class="week">Lectimate</span>
 			</div>
 			<ul class="lessons">
 				{
-					lessons.map((lesson) => (
-						<li class:list={[{ now: lesson.now }]}>
+					t.lessons.map((lesson, i) => (
+						<li class:list={[{ now: i === NOW }]}>
 							<span class="time">{lesson.time}</span>
 							<span class="name">{lesson.name}</span>
 							<span class="room">{lesson.room}</span>
@@ -33,8 +38,8 @@ const lessons = [
 				}
 			</ul>
 			<div class="cards">
-				<div><span>Homework</span><b>2 due</b></div>
-				<div><span>Books</span><b>1 out</b></div>
+				<div><span>{t.homework}</span><b>{t.homeworkValue}</b></div>
+				<div><span>{t.books}</span><b>{t.booksValue}</b></div>
 			</div>
 			<div class="tabs">
 				<span class="active"></span><span></span><span></span><span></span>

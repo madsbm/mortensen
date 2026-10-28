@@ -1,6 +1,14 @@
 ---
+import type { Lang } from '../../i18n/config';
+import { useTranslations } from '../../i18n/ui';
+
+interface Props {
+	lang: Lang;
+}
+
 // Two clients standing on the same chunk grid. The plot in the middle has the
 // same coordinates for both, but each client is sent a different build.
+const t = useTranslations(Astro.props.lang).covers.packetplots;
 const SIZE = 5;
 const PLOT = 12; // centre cell of a 5×5 grid
 
@@ -24,8 +32,8 @@ const buildB = [
 
 const cells = Array.from({ length: SIZE * SIZE }, (_, i) => i);
 const views = [
-	{ id: 'a', label: 'client a', build: buildA },
-	{ id: 'b', label: 'client b', build: buildB },
+	{ id: 'a', label: t.client('a'), build: buildA },
+	{ id: 'b', label: t.client('b'), build: buildB },
 ];
 ---
 
@@ -53,7 +61,7 @@ const views = [
 			</figure>
 		))
 	}
-	<p class="caption">same chunk · different packets</p>
+	<p class="caption">{t.caption}</p>
 </div>
 
 <style>

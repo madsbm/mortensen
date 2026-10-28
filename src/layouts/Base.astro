@@ -4,37 +4,48 @@ import BinaryBackdrop from '../components/BinaryBackdrop.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import type { Crumb } from '../lib/types';
+import { alternatesFor, homePath, locales, ogLocale, sections, type Lang } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
 import { site } from '../site';
 import '../styles/global.css';
 
 interface Props {
+	lang: Lang;
 	title?: string;
 	description?: string;
 	crumbs?: Crumb[];
 	spy?: boolean;
 	/** The project a case-study page is about. */
 	project?: string;
+	/** This page in every language. Defaults to the home pages. */
+	alternates?: Record<Lang, string>;
 }
 
-const { title, description = site.description, crumbs, spy, project } = Astro.props;
-const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.role}`;
+const { lang, title, crumbs, spy, project, alternates = alternatesFor(homePath) } = Astro.props;
+const t = useTranslations(lang);
+const description = Astro.props.description ?? t.meta.description;
+const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${t.meta.role}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const workSegments = locales.map((l) => sections[l].work);
 ---
 
 <!doctype html>
-<html lang="en" data-project={project}>
+<html lang={lang} data-project={project}>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{fullTitle}</title>
 		<meta name="description" content={description} />
 		<link rel="canonical" href={canonical} />
+		{locales.map((l) => <link rel="alternate" hreflang={l} href={new URL(alternates[l], Astro.site)} />)}
+		<link rel="alternate" hreflang="x-default" href={new URL(alternates.en, Astro.site)} />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="theme-color" content="#ffffff" />
 		<meta name="generator" content={Astro.generator} />
 		{site.originTrialToken && <meta http-equiv="origin-trial" content={site.originTrialToken} />}
 
 		<meta property="og:type" content="website" />
+		<meta property="og:locale" content={ogLocale[lang]} />
 		<meta property="og:title" content={fullTitle} />
 		<meta property="og:description" content={description} />
 		<meta property="og:url" content={canonical} />
@@ -49,38 +60,37 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 			names, so unrelated covers and titles can't fly across the morph. Inline
 			so the listeners exist before the first frame of the new page.
 		-->
-		<script is:inline>
-			(() => {
-				const projectOf = (url) => url && new URL(url).pathname.match(/^\/work\/([^/]+)/)?.[1];
-				const scope = (other, transition) => {
-					const own = document.documentElement.dataset.project;
-					const stripped = [];
-					for (const el of document.querySelectorAll('[data-vt-project]')) {
-						const id = el.dataset.vtProject;
-						if (id === own || id === other) continue;
-						el.style.viewTransitionName = 'none';
-						stripped.push(el);
-					}
-					transition.finished.finally(() => {
-						for (const el of stripped) el.style.viewTransitionName = '';
-					});
-				};
-				addEventListener('pageswap', (event) => {
-					if (event.viewTransition) scope(projectOf(event.activation?.entry?.url), event.viewTransition);
+		<script is:inline define:vars={{ workSegments }}>
+			const pattern = new RegExp(`/(?:${workSegments.join('|')})/([^/]+)`);
+			const projectOf = (url) => url && new URL(url).pathname.match(pattern)?.[1];
+			const scope = (other, transition) => {
+				const own = document.documentElement.dataset.project;
+				const stripped = [];
+				for (const el of document.querySelectorAll('[data-vt-project]')) {
+					const id = el.dataset.vtProject;
+					if (id === own || id === other) continue;
+					el.style.viewTransitionName = 'none';
+					stripped.push(el);
+				}
+				transition.finished.finally(() => {
+					for (const el of stripped) el.style.viewTransitionName = '';
 				});
-				addEventListener('pagereveal', (event) => {
-					if (event.viewTransition) scope(projectOf(window.navigation?.activation?.from?.url), event.viewTransition);
-				});
-			})();
+			};
+			addEventListener('pageswap', (event) => {
+				if (event.viewTransition) scope(projectOf(event.activation?.entry?.url), event.viewTransition);
+			});
+			addEventListener('pagereveal', (event) => {
+				if (event.viewTransition) scope(projectOf(window.navigation?.activation?.from?.url), event.viewTransition);
+			});
 		</script>
 	</head>
 	<body>
 		<BinaryBackdrop />
-		<a class="skip" href="#main">Skip to content</a>
-		<Header crumbs={crumbs} spy={spy} />
+		<a class="skip" href="#main">{t.nav.skip}</a>
+		<Header lang={lang} crumbs={crumbs} spy={spy} />
 		<main id="main">
 			<slot />
 		</main>
-		<Footer />
+		<Footer lang={lang} />
 	</body>
 </html>

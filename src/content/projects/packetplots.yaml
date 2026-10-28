@@ -1,0 +1,6 @@
+order: 3
+status: complete
+cover: packetplots
+links:
+  - kind: source
+    href: https://github.com/madsbm/PacketPlots

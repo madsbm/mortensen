@@ -1,10 +1,7 @@
+// Language-independent details. Copy lives in src/i18n/ui.ts.
 export const site = {
 	name: 'Mads Bech Mortensen',
 	shortName: 'Mads',
-	role: 'Software engineer',
-	location: 'Denmark',
-	description:
-		'Mads Bech Mortensen is a software engineer in Denmark working on systems programming, concurrency, networking and production infrastructure.',
 	// Never rendered as plain text. It is XOR-encoded at build time and only
 	// decoded in the browser after a real click (see src/lib/obfuscate.ts).
 	email: 'mail@madsbechmortensen.dk',

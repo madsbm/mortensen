@@ -1,14 +1,11 @@
 ---
-order: 4
 title: Lectimate
 tagline: A school companion app that reached 1,000+ users while I was still in high school.
 summary: Lecture calendar, homework, assignments, absence and borrowed library books in one place. I built it independently and ran it until it was shut down.
 notice: Lectimate is no longer developed. It was shut down after reaching more than 1,000 users.
 tags: [Product, Mobile, Adoption]
-status: Discontinued
 role: Built independently
 stack: [App development, Product design]
-cover: lectimate
 ---
 
 ## What it did

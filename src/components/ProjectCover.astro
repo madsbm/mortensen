@@ -3,22 +3,24 @@ import TosCover from './covers/TosCover.astro';
 import RelayCover from './covers/RelayCover.astro';
 import PacketPlotsCover from './covers/PacketPlotsCover.astro';
 import LectimateCover from './covers/LectimateCover.astro';
+import type { Lang } from '../i18n/config';
 
 interface Props {
+	lang: Lang;
 	id: string;
 	kind: 'tos' | 'relay' | 'packetplots' | 'lectimate';
 	class?: string;
 }
 
-const { id, kind, class: className } = Astro.props;
+const { lang, id, kind, class: className } = Astro.props;
 ---
 
 <div class:list={['cover', 'vt', className]} style={`--vt: cover-${id}`} data-vt-project={id}>
 	<div class="frame">
 		{kind === 'tos' && <TosCover />}
-		{kind === 'relay' && <RelayCover />}
-		{kind === 'packetplots' && <PacketPlotsCover />}
-		{kind === 'lectimate' && <LectimateCover />}
+		{kind === 'relay' && <RelayCover lang={lang} />}
+		{kind === 'packetplots' && <PacketPlotsCover lang={lang} />}
+		{kind === 'lectimate' && <LectimateCover lang={lang} />}
 	</div>
 </div>
 

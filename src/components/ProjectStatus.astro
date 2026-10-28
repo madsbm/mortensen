@@ -1,16 +1,19 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import type { Lang } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
 
 interface Props {
+	lang: Lang;
 	status: CollectionEntry<'projects'>['data']['status'];
 }
 
-const { status } = Astro.props;
-const state = status.toLowerCase().replace(/\s+/g, '-');
+const { lang, status } = Astro.props;
+const t = useTranslations(lang);
 ---
 
-<span class="status mono" data-state={state}>
-	<span class="dot" aria-hidden="true"></span>{status}
+<span class="status mono" data-state={status}>
+	<span class="dot" aria-hidden="true"></span>{t.status[status]}
 </span>
 
 <style>
@@ -30,7 +33,7 @@ const state = status.toLowerCase().replace(/\s+/g, '-');
 		background: var(--ink-3);
 	}
 
-	[data-state='in-development'] .dot {
+	[data-state='active'] .dot {
 		background: var(--accent);
 		box-shadow: 0 0 0 3px rgb(255 79 31 / 0.16);
 	}

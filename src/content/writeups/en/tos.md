@@ -1,16 +1,10 @@
 ---
-order: 1
 title: tOS
 tagline: A bare-metal x86_64 operating system, written in Rust.
 summary: A largely dependency-free kernel with its own memory management, synchronisation primitives, NVMe and network drivers, an ext2 filesystem and an experimental TCP/IP stack.
 tags: [Rust, x86_64, Kernel]
 role: Solo project
-status: In development
 stack: [Rust, x86_64, ACPI, NVMe, E1000, ext2, TCP/IP]
-cover: tos
-links:
-  - label: Source on GitHub
-    href: https://github.com/madsbm/tOS
 ---
 
 ## Why build an OS

@@ -1,5 +1,8 @@
 import { decode } from '../lib/obfuscate';
+import type { Dictionary } from '../i18n/ui';
 import type { SplashDetail } from './fx';
+
+type Strings = Dictionary['contact']['client'];
 
 // The address is only decoded inside handlers for trusted (real user) events.
 function address(el: HTMLElement) {
@@ -19,6 +22,8 @@ export function setUpContact() {
 	const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
 	const reveal = document.querySelector<HTMLElement>('[data-address]');
 	const status = form?.querySelector<HTMLElement>('[data-status]');
+	// Localised copy, rendered into the page by ContactForm.astro.
+	const t: Strings = JSON.parse(form?.dataset.strings ?? '{}');
 
 	reveal?.querySelector('[data-reveal]')?.addEventListener('click', (event) => {
 		if (!event.isTrusted) return;
@@ -32,10 +37,10 @@ export function setUpContact() {
 		const copyButton = document.createElement('button');
 		copyButton.type = 'button';
 		copyButton.className = 'button button-ghost';
-		copyButton.textContent = 'Copy';
+		copyButton.textContent = t.copy;
 		copyButton.addEventListener('click', async () => {
-			copyButton.textContent = (await copy(email)) ? 'Copied' : 'Copy failed';
-			setTimeout(() => (copyButton.textContent = 'Copy'), 1600);
+			copyButton.textContent = (await copy(email)) ? t.copied : t.copyFailed;
+			setTimeout(() => (copyButton.textContent = t.copy), 1600);
 		});
 
 		reveal.replaceChildren(link, copyButton);
@@ -48,7 +53,7 @@ export function setUpContact() {
 
 		const data = new FormData(form);
 		const name = String(data.get('name') ?? '').trim();
-		const subject = String(data.get('subject') ?? '').trim() || `Hello from ${name}`;
+		const subject = String(data.get('subject') ?? '').trim() || t.defaultSubject.replace('{name}', name);
 		const message = String(data.get('message') ?? '').trim();
 		const body = `${message}\n\n${name}`;
 
@@ -62,15 +67,15 @@ export function setUpContact() {
 
 	function showStatus(email: string) {
 		if (!status) return;
-		status.textContent = 'Opening your mail app…';
+		status.textContent = t.opening;
 		setTimeout(() => {
 			const button = document.createElement('button');
 			button.type = 'button';
-			button.textContent = 'copy the address';
+			button.textContent = t.fallbackButton;
 			button.addEventListener('click', async () => {
-				status.textContent = (await copy(email)) ? 'Copied to your clipboard.' : email;
+				status.textContent = (await copy(email)) ? t.copiedToClipboard : email;
 			});
-			status.replaceChildren('Nothing opened? ', button, ' instead.');
+			status.replaceChildren(t.fallbackBefore, button, t.fallbackAfter);
 		}, 2400);
 	}
 }
