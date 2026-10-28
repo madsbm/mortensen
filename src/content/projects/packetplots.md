@@ -8,6 +8,9 @@ role: Solo project
 status: Complete
 stack: [Java, Netty, Minecraft protocol]
 cover: packetplots
+links:
+  - label: Source on GitHub
+    href: https://github.com/madsbm/PacketPlots
 ---
 
 ## The idea

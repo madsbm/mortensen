@@ -18,6 +18,17 @@ const encoded = encode(site.email, key);
 			<button class="button button-ghost" type="button" data-reveal>Show email address</button>
 			<noscript><p class="note">Enable JavaScript to see the address.</p></noscript>
 		</div>
+		<ul class="elsewhere mono" aria-label="Profiles">
+			{
+				site.links.map((link) => (
+					<li>
+						<a href={link.href} rel="me noopener">
+							{link.label} ↗
+						</a>
+					</li>
+				))
+			}
+		</ul>
 	</div>
 
 	<CanvasFx
@@ -101,8 +112,27 @@ const encoded = encode(site.email, key);
 		transition: text-decoration-color 200ms ease;
 	}
 
+	.elsewhere {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 20px;
+		margin-top: 4px;
+	}
+
+	.elsewhere a {
+		color: var(--ink-2);
+		text-decoration: underline;
+		text-decoration-color: var(--line-strong);
+		text-underline-offset: 4px;
+		transition:
+			color 200ms ease,
+			text-decoration-color 200ms ease;
+	}
+
 	@media (hover: hover) and (pointer: fine) {
-		.address :global(.email:hover) {
+		.address :global(.email:hover),
+		.elsewhere a:hover {
+			color: var(--ink);
 			text-decoration-color: var(--ink);
 		}
 	}

@@ -8,6 +8,9 @@ role: Solo project
 status: In development
 stack: [Rust, x86_64, ACPI, NVMe, E1000, ext2, TCP/IP]
 cover: tos
+links:
+  - label: Source on GitHub
+    href: https://github.com/madsbm/tOS
 ---
 
 ## Why build an OS
