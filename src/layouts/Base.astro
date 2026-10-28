@@ -4,7 +4,16 @@ import BinaryBackdrop from '../components/BinaryBackdrop.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import type { Crumb } from '../lib/types';
-import { alternatesFor, homePath, locales, ogLocale, sections, type Lang } from '../i18n/config';
+import {
+	alternatesFor,
+	defaultLang,
+	homePath,
+	languageKey,
+	locales,
+	ogLocale,
+	sections,
+	type Lang,
+} from '../i18n/config';
 import { useTranslations } from '../i18n/ui';
 import { site } from '../site';
 import '../styles/global.css';
@@ -19,9 +28,19 @@ interface Props {
 	project?: string;
 	/** This page in every language. Defaults to the home pages. */
 	alternates?: Record<Lang, string>;
+	/** Send visitors to their preferred language. Off for the 404 page. */
+	detectLanguage?: boolean;
 }
 
-const { lang, title, crumbs, spy, project, alternates = alternatesFor(homePath) } = Astro.props;
+const {
+	lang,
+	title,
+	crumbs,
+	spy,
+	project,
+	alternates = alternatesFor(homePath),
+	detectLanguage = true,
+} = Astro.props;
 const t = useTranslations(lang);
 const description = Astro.props.description ?? t.meta.description;
 const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${t.meta.role}`;
@@ -38,7 +57,32 @@ const workSegments = locales.map((l) => sections[l].work);
 		<meta name="description" content={description} />
 		<link rel="canonical" href={canonical} />
 		{locales.map((l) => <link rel="alternate" hreflang={l} href={new URL(alternates[l], Astro.site)} />)}
-		<link rel="alternate" hreflang="x-default" href={new URL(alternates.en, Astro.site)} />
+		<link rel="alternate" hreflang="x-default" href={new URL(alternates[defaultLang], Astro.site)} />
+		{
+			detectLanguage && (
+				<script
+					is:inline
+					define:vars={{ lang, alternates, locales, defaultLang, sections, languageKey }}
+				>
+					// Runs before anything renders. A language the visitor picked wins;
+					// otherwise the browser's preference applies, but only on arrival at
+					// the default language. Localised addresses are explicit, and
+					// crawlers (which report English) never get bounced off them.
+					let stored = null;
+					try {
+						stored = localStorage.getItem(languageKey);
+					} catch {}
+					const preferred = (navigator.languages || [navigator.language])
+						.map((tag) => tag.toLowerCase().split('-')[0])
+						.find((code) => locales.includes(code));
+					const target = locales.includes(stored) ? stored : lang === defaultLang ? preferred : null;
+					if (target && target !== lang) {
+						const key = Object.keys(sections[lang]).find((k) => '#' + sections[lang][k] === location.hash);
+						location.replace(alternates[target] + (key ? '#' + sections[target][key] : location.hash));
+					}
+				</script>
+			)
+		}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="theme-color" content="#ffffff" />
 		<meta name="generator" content={Astro.generator} />
@@ -87,7 +131,7 @@ const workSegments = locales.map((l) => sections[l].work);
 	<body>
 		<BinaryBackdrop />
 		<a class="skip" href="#main">{t.nav.skip}</a>
-		<Header lang={lang} crumbs={crumbs} spy={spy} />
+		<Header lang={lang} alternates={alternates} crumbs={crumbs} spy={spy} />
 		<main id="main">
 			<slot />
 		</main>

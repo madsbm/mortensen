@@ -14,6 +14,7 @@ const en = {
 		about: 'About',
 		contact: 'Contact',
 		skip: 'Skip to content',
+		language: 'Language',
 	},
 	hero: {
 		eyebrow: 'Software engineer · Denmark',
@@ -139,6 +140,7 @@ const da: Dictionary = {
 		about: 'Om',
 		contact: 'Kontakt',
 		skip: 'Spring til indhold',
+		language: 'Sprog',
 	},
 	hero: {
 		eyebrow: 'Softwareudvikler · Danmark',

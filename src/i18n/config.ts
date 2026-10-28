@@ -12,6 +12,15 @@ export const sections: Record<Lang, Record<SectionKey, string>> = {
 	da: { work: 'arbejde', about: 'om', contact: 'kontakt' },
 };
 
+/** Each language named in itself, for the switcher. */
+export const languageNames: Record<Lang, string> = {
+	en: 'English',
+	da: 'Dansk',
+};
+
+/** localStorage key holding a language the visitor picked explicitly. */
+export const languageKey = 'lang';
+
 export const ogLocale: Record<Lang, string> = {
 	en: 'en_GB',
 	da: 'da_DK',

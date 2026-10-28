@@ -10,7 +10,11 @@ const prefixes = Object.fromEntries(locales.map((lang) => [lang, homePath(lang)]
 const titles = Object.fromEntries(locales.map((lang) => [lang, `${ui[lang].notFound.title} — ${site.name}`]));
 ---
 
-<Base lang={defaultLang} title={ui[defaultLang].notFound.title} crumbs={[{ label: '404', href: '/404', current: true }]}>
+<Base
+	lang={defaultLang}
+	title={ui[defaultLang].notFound.title}
+	detectLanguage={false}
+	crumbs={[{ label: '404', href: '/404', current: true }]}>
 	{
 		locales.map((lang) => {
 			const t = ui[lang].notFound;

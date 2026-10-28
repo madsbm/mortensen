@@ -1,19 +1,31 @@
 ---
 import type { Crumb } from '../lib/types';
-import { homePath, sectionPath, sections, type Lang } from '../i18n/config';
+import { homePath, languageNames, locales, sectionPath, sections, type Lang, type SectionKey } from '../i18n/config';
 import { useTranslations } from '../i18n/ui';
 import { site } from '../site';
 
 interface Props {
 	lang: Lang;
+	/** This page in every language, for the switcher. */
+	alternates: Record<Lang, string>;
 	/** Fixed breadcrumb segments, used on project pages. */
 	crumbs?: Crumb[];
 	/** Show a single segment that follows the section in view (home page). */
 	spy?: boolean;
 }
 
-const { lang, crumbs = [], spy = false } = Astro.props;
+const { lang, alternates, crumbs = [], spy = false } = Astro.props;
 const t = useTranslations(lang);
+
+// On the home page, switching language keeps you at the same section.
+const sectionMap = (target: Lang) =>
+	spy
+		? JSON.stringify(
+				Object.fromEntries(
+					(Object.keys(sections[lang]) as SectionKey[]).map((key) => [sections[lang][key], sections[target][key]]),
+				),
+			)
+		: undefined;
 ---
 
 <header class="site-header">
@@ -59,6 +71,24 @@ const t = useTranslations(lang);
 		<nav class="links vt" style="--vt: pill-nav" aria-label={t.nav.primary}>
 			<a class="link" href={sectionPath(lang, 'work')}>{t.nav.work}</a>
 			<a class="link" href={sectionPath(lang, 'about')}>{t.nav.about}</a>
+			<span class="langs" role="group" aria-label={t.nav.language}>
+				{
+					locales.map((l) => (
+						<a
+							class="lang"
+							href={alternates[l]}
+							hreflang={l}
+							lang={l}
+							aria-label={languageNames[l]}
+							aria-current={l === lang ? 'true' : undefined}
+							data-lang-switch={l}
+							data-section-map={l === lang ? undefined : sectionMap(l)}
+						>
+							{l}
+						</a>
+					))
+				}
+			</span>
 			<a class="link link-cta" href={sectionPath(lang, 'contact')}>{t.nav.contact}</a>
 		</nav>
 	</div>
@@ -66,7 +96,9 @@ const t = useTranslations(lang);
 
 <script>
 	import { followSections } from '../scripts/crumbs';
+	import { setUpLanguageSwitch } from '../scripts/language';
 	followSections();
+	setUpLanguageSwitch();
 </script>
 
 <style>
@@ -233,6 +265,45 @@ const t = useTranslations(lang);
 		color: var(--bg);
 	}
 
+	/* Language switch: a small segmented control. */
+	.langs {
+		display: flex;
+		align-items: center;
+		gap: 2px;
+		margin-inline: 4px 6px;
+		padding: 3px;
+		border-radius: 999px;
+		background: rgb(11 11 12 / 0.05);
+	}
+
+	.lang {
+		display: inline-grid;
+		place-items: center;
+		min-width: 32px;
+		height: 30px;
+		padding-inline: 8px;
+		border-radius: 999px;
+		color: var(--ink-3);
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		transition:
+			background-color 200ms ease,
+			color 200ms ease;
+	}
+
+	.lang[aria-current] {
+		background: var(--bg);
+		box-shadow: 0 1px 2px rgb(11 11 12 / 0.1);
+		color: var(--ink);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.lang:not([aria-current]):hover {
+			color: var(--ink);
+		}
+	}
+
 	@media (hover: hover) and (pointer: fine) {
 		.link:not(.link-cta):hover,
 		.brand:hover {
@@ -266,6 +337,28 @@ const t = useTranslations(lang);
 			margin-left: 8px;
 			padding-left: 0;
 			border-left: 0;
+		}
+
+		/* Only the language you can switch to, as a plain link. */
+		.langs {
+			margin: 0;
+			padding: 0;
+			background: none;
+		}
+
+		.lang {
+			height: 40px;
+		}
+
+		.lang[aria-current] {
+			display: none;
+		}
+	}
+
+	/* No room for the whole path: keep the last slug, the name links home. */
+	@media (max-width: 480px) {
+		.crumb:not(:last-child) {
+			display: none;
 		}
 	}
 
