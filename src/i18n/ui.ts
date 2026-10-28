@@ -18,9 +18,7 @@ const en = {
 	},
 	hero: {
 		eyebrow: 'Software engineer · Denmark',
-		line1: 'Low-level by choice.',
-		line2: 'Full-stack by trade.',
-		lede: "I'm Mads, a software engineer focused on systems programming, concurrency and networking. By day I build and harden production platforms at Side-Walk. After hours I'm writing tOS, a bare-metal x86_64 operating system in Rust.",
+		lede: 'Full-stack engineer at Side-Walk, writing an operating system in Rust on the side.',
 		work: 'See the work',
 		contact: 'Get in touch',
 	},
@@ -143,9 +141,7 @@ const da: Dictionary = {
 	},
 	hero: {
 		eyebrow: 'Softwareudvikler · Danmark',
-		line1: 'Low-level af lyst.',
-		line2: 'Full-stack af fag.',
-		lede: 'Jeg hedder Mads og er softwareudvikler med fokus på systemprogrammering, concurrency og netværk. Til daglig bygger og hærder jeg produktionsplatforme hos Side-Walk. I fritiden skriver jeg tOS, et bare-metal x86_64-styresystem i Rust.',
+		lede: 'Full-stack-udvikler hos Side-Walk, og ved siden af skriver jeg et styresystem i Rust.',
 		work: 'Se mit arbejde',
 		contact: 'Kontakt mig',
 	},

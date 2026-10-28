@@ -37,10 +37,7 @@ const person = JSON.stringify({
 	<section class="hero" aria-labelledby="hero-title">
 		<div class="container hero-inner">
 			<p class="eyebrow mono"><span class="dot" aria-hidden="true"></span>{t.hero.eyebrow}</p>
-			<h1 id="hero-title" class="display">
-				{t.hero.line1}<br />
-				<span class="muted">{t.hero.line2}</span>
-			</h1>
+			<h1 id="hero-title" class="display">{site.name}</h1>
 			<div class="hero-foot">
 				<p class="lede">{t.hero.lede}</p>
 				<div class="actions">
@@ -191,10 +188,6 @@ const person = JSON.stringify({
 		line-height: 0.94;
 		letter-spacing: -0.05em;
 		text-wrap: balance;
-	}
-
-	.muted {
-		color: var(--ink-3);
 	}
 
 	.hero-foot {
