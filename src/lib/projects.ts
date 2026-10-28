@@ -32,3 +32,6 @@ export async function projectPaths(lang: Lang) {
 }
 
 export const pad = (n: number) => String(n).padStart(2, '0');
+
+/** "owner/repo" from a repository URL. */
+export const repoName = (href: string) => new URL(href).pathname.replace(/^\/|\/$/g, '');

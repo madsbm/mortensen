@@ -87,7 +87,6 @@ const en = {
 		more: 'More projects',
 		previous: 'Previous',
 		next: 'Next',
-		source: 'Source on GitHub',
 	},
 	status: {
 		active: 'In development',
@@ -215,7 +214,6 @@ const da: Dictionary = {
 		more: 'Flere projekter',
 		previous: 'Forrige',
 		next: 'Næste',
-		source: 'Kildekode på GitHub',
 	},
 	status: {
 		active: 'Under udvikling',

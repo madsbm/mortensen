@@ -3,9 +3,10 @@ import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import ProjectCover from '../ProjectCover.astro';
 import ProjectStatus from '../ProjectStatus.astro';
+import BrandIcon from '../BrandIcon.astro';
 import { alternatesFor, projectPath, sectionPath, sections, type Lang } from '../../i18n/config';
 import { useTranslations } from '../../i18n/ui';
-import { pad, type Project } from '../../lib/projects';
+import { pad, repoName, type Project } from '../../lib/projects';
 
 interface Props {
 	lang: Lang;
@@ -83,8 +84,9 @@ const pager = [
 							<dt class="mono">{t.project.links}</dt>
 							<dd>
 								{project.links.map((link) => (
-									<a href={link.href} rel="noopener">
-										{t.project.source} ↗
+									<a class="repo" href={link.href} rel="noopener">
+										<BrandIcon name="github" label="GitHub" />
+										{repoName(link.href)}
 									</a>
 								))}
 							</dd>
@@ -215,6 +217,19 @@ const pager = [
 		text-decoration: underline;
 		text-decoration-color: var(--line-strong);
 		text-underline-offset: 3px;
+	}
+
+	.facts .repo {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		transition: text-decoration-color 200ms ease;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.facts .repo:hover {
+			text-decoration-color: currentColor;
+		}
 	}
 
 	.prose {

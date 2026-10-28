@@ -1,5 +1,6 @@
 ---
 import CanvasFx from './CanvasFx.astro';
+import BrandIcon from './BrandIcon.astro';
 import type { Lang } from '../i18n/config';
 import { useTranslations } from '../i18n/ui';
 import { encode } from '../lib/obfuscate';
@@ -29,7 +30,8 @@ const encoded = encode(site.email, key);
 				site.links.map((link) => (
 					<li>
 						<a href={link.href} rel="me noopener">
-							{link.label} ↗
+							<BrandIcon name={link.icon} />
+							{link.label}
 						</a>
 					</li>
 				))
@@ -132,6 +134,9 @@ const encoded = encode(site.email, key);
 	}
 
 	.elsewhere a {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
 		color: var(--ink-2);
 		text-decoration: underline;
 		text-decoration-color: var(--line-strong);

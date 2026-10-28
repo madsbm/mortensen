@@ -3,9 +3,10 @@ import Base from '../../layouts/Base.astro';
 import ProjectCover from '../ProjectCover.astro';
 import ProjectStatus from '../ProjectStatus.astro';
 import ContactForm from '../ContactForm.astro';
+import BrandIcon from '../BrandIcon.astro';
 import { projectPath, sections, type Lang } from '../../i18n/config';
 import { useTranslations } from '../../i18n/ui';
-import { getProjects, pad } from '../../lib/projects';
+import { getProjects, pad, repoName } from '../../lib/projects';
 import { site } from '../../site';
 
 interface Props {
@@ -83,7 +84,8 @@ const person = JSON.stringify({
 								</span>
 								{project.links.map((link) => (
 									<a class="source mono" href={link.href} rel="noopener">
-										{t.project.source} ↗
+										<BrandIcon name="github" label="GitHub" />
+										{repoName(link.href)}
 									</a>
 								))}
 							</div>
@@ -316,6 +318,9 @@ const person = JSON.stringify({
 	.source {
 		position: relative;
 		z-index: 2;
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
 		color: var(--ink-3);
 		font-size: 0.75rem;
 		text-decoration: underline;

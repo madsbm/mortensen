@@ -6,10 +6,11 @@ export const site = {
 	// decoded in the browser after a real click (see src/lib/obfuscate.ts).
 	email: 'mail@madsbechmortensen.dk',
 	// Profiles, shown in the footer and contact section and listed as sameAs.
+	// `icon` names a logo in src/components/BrandIcon.astro.
 	links: [
-		{ label: 'GitHub', href: 'https://github.com/madsbm' },
-		{ label: 'LinkedIn', href: 'https://dk.linkedin.com/in/mads-bech-mortensen-755830319' },
-	],
+		{ label: 'GitHub', href: 'https://github.com/madsbm', icon: 'github' },
+		{ label: 'LinkedIn', href: 'https://dk.linkedin.com/in/mads-bech-mortensen-755830319', icon: 'linkedin' },
+	] as const,
 	// Chrome origin trial token for the html-in-canvas API. With a token for
 	// this domain, visitors get the Canvas UI effects without enabling a flag.
 	// Register at https://developer.chrome.com/origintrials
