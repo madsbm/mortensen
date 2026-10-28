@@ -18,7 +18,7 @@ src/
 ├── content.config.ts   Schemas for both collections
 ├── i18n/
 │   ├── config.ts       Languages, localised slugs and path helpers
-│   └── ui.ts           Every interface string, per language
+│   └── ui.ts           Every interface string per language, including skills and the about timeline
 ├── components/
 │   ├── pages/          HomePage and ProjectPage, rendered once per language
 │   ├── Header.astro    The pill header, breadcrumb slugs and language switch
@@ -31,7 +31,7 @@ src/
 ├── pages/              Thin routes: / and /work/<id>, /da/ and /da/arbejde/<id>
 ├── layouts/Base.astro  Page shell, fonts, language redirect, view transition scoping
 ├── lib/canvasui/       Vendored Canvas UI effects (see their LICENSE.md)
-├── scripts/            Breadcrumb ticker, effect mounting, contact form, language switch
+├── scripts/            Breadcrumb ticker, effect mounting, contact form, language switch, project list, timeline
 ├── styles/global.css   Tokens (plus an `.inverted` dark scope), base styles, view transitions
 └── site.ts             Name, email, profile links, origin trial token
 ```
