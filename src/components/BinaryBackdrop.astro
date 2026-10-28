@@ -58,10 +58,13 @@ import CanvasFx from './CanvasFx.astro';
 	}
 
 	/* The effect boosts glyph contrast for legibility; here the digits are
-	   texture, so they're knocked back behind the text. */
+	   texture, so they're knocked back, and the mask from backdrop.ts keeps
+	   them to the edges of the screen. */
 	.backdrop :global(.backdrop-fx .fx-output) {
 		z-index: 2;
-		opacity: 0.13;
+		opacity: 0.4;
+		-webkit-mask-image: var(--backdrop-mask);
+		mask-image: var(--backdrop-mask);
 	}
 
 	.art {
