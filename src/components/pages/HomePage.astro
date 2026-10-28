@@ -18,6 +18,8 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const slug = sections[lang];
 const projects = await getProjects(lang);
+// Projects shown before the list is expanded.
+const shown = 2;
 
 // Structured data for search engines. The email address stays out of it.
 const person = JSON.stringify({
@@ -72,10 +74,10 @@ const person = JSON.stringify({
 			<span class="mono">{t.work.count(pad(projects.length))}</span>
 		</div>
 
-		<ol class="projects">
+		<ol id="projects" class="projects" data-projects>
 			{
-				projects.map((project) => (
-					<li class="project">
+				projects.map((project, i) => (
+					<li class="project" data-extra={i >= shown ? '' : undefined}>
 						<span class="num mono vt" style={`--vt: num-${project.id}`} data-vt-project={project.id}>
 							{pad(project.order)}
 						</span>
@@ -109,6 +111,39 @@ const person = JSON.stringify({
 				))
 			}
 		</ol>
+		{
+			projects.length > shown && (
+				<div class="more" data-projects-more hidden>
+					<button class="button button-ghost" type="button" aria-controls="projects" aria-expanded="false">
+						{t.work.more(projects.length - shown)} <span class="arrow" aria-hidden="true">↓</span>
+					</button>
+				</div>
+			)
+		}
+		<script is:inline>
+			// Collapse the list before it paints, so it never jumps. It stays open
+			// if it was opened earlier this visit, or when coming back from one of
+			// the hidden projects, which the page transition morphs back into.
+			// Without JavaScript every project shows. The storage key is shared
+			// with src/scripts/projects.ts.
+			{
+				const list = document.querySelector('[data-projects]');
+				const more = document.querySelector('[data-projects-more]');
+				let open = false;
+				try {
+					open = sessionStorage.getItem('projects') === 'all';
+				} catch {}
+				const from = window.navigation?.activation?.from?.url || document.referrer;
+				if (from) {
+					const path = new URL(from).pathname;
+					open ||= [...list.querySelectorAll('[data-extra] a')].some((link) => link.pathname === path);
+				}
+				if (more && !open) {
+					list.dataset.collapsed = '';
+					more.hidden = false;
+				}
+			}
+		</script>
 	</section>
 
 	<section id={slug.about} class="container section" data-section={slug.about} aria-labelledby="about-title">
@@ -153,6 +188,11 @@ const person = JSON.stringify({
 		</div>
 	</div>
 </Base>
+
+<script>
+	import { setUpProjectList } from '../../scripts/projects';
+	setUpProjectList();
+</script>
 
 <style>
 	/* ---------------------------------------------------------------- hero */
@@ -346,6 +386,15 @@ const person = JSON.stringify({
 	}
 
 	/* ------------------------------------------------------------- projects */
+
+	/* Set by the inline script until the visitor shows the rest. */
+	.projects[data-collapsed] > [data-extra] {
+		display: none;
+	}
+
+	.more {
+		padding-top: clamp(24px, 3vw, 36px);
+	}
 
 	.project {
 		position: relative;

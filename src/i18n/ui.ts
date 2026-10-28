@@ -42,6 +42,7 @@ const en = {
 		count: (n: string) => `${n} projects`,
 		topics: 'Topics',
 		open: 'Read the case study',
+		more: (n: number) => `Show ${n} more`,
 	},
 	about: {
 		title: 'About',
@@ -172,6 +173,7 @@ const da: Dictionary = {
 		count: (n: string) => `${n} projekter`,
 		topics: 'Emner',
 		open: 'Læs om projektet',
+		more: (n: number) => `Vis ${n} mere`,
 	},
 	about: {
 		title: 'Om mig',
