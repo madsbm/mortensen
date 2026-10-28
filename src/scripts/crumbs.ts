@@ -56,8 +56,10 @@ export function followSections() {
 		if (!old) return;
 		const from = link!.getBoundingClientRect().width;
 
+		// Entering, the label is clipped rather than ellipsised while the link
+		// grows to fit it.
 		const next = document.createElement('span');
-		next.className = 'crumb-text';
+		next.className = 'crumb-text is-entering';
 		next.textContent = text;
 		link!.append(next);
 
@@ -67,7 +69,8 @@ export function followSections() {
 		Object.assign(old.style, { position: 'absolute', inset: '0 auto 0 0', display: 'grid', alignItems: 'center' });
 		const to = link!.getBoundingClientRect().width;
 
-		link!.animate({ width: [`${from}px`, `${to}px`] }, { duration: 320, easing: EASE_OUT });
+		link!.animate({ width: [`${from}px`, `${to}px`] }, { duration: 320, easing: EASE_OUT }).onfinish = () =>
+			next.classList.remove('is-entering');
 		old.animate(
 			{ opacity: [1, 0], transform: ['none', 'translateY(-70%)'], filter: ['blur(0)', 'blur(2px)'] },
 			{ duration: 200, easing: EASE_OUT, fill: 'forwards' },

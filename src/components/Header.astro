@@ -229,6 +229,10 @@ const sectionMap = (target: Lang) =>
 		text-overflow: ellipsis;
 	}
 
+	.crumb-link > :global(.crumb-text.is-entering) {
+		text-overflow: clip;
+	}
+
 	.crumb-link[aria-current='page'] {
 		color: var(--ink);
 	}
