@@ -30,6 +30,7 @@ export function followSections() {
 
 		if (!slug) {
 			delete crumb!.dataset.shown;
+			clipWhileResizing(link!.querySelector('.crumb-text'));
 			return;
 		}
 
@@ -37,9 +38,24 @@ export function followSections() {
 		if (!previous || reducedMotion.matches) {
 			setText(slug);
 			crumb!.dataset.shown = '';
+			clipWhileResizing(link!.querySelector('.crumb-text'));
 			return;
 		}
 		tick(slug);
+	}
+
+	// The label ellipsises when it doesn't fit, which it briefly doesn't while
+	// the crumb grows or shrinks around it. Until that settles, it's clipped
+	// instead, so it doesn't flash "abo…".
+	function clipWhileResizing(label: Element | null) {
+		if (!label) return;
+		const resizing = () => [...crumb!.getAnimations(), ...link!.getAnimations()];
+		label.classList.add('is-resizing');
+		Promise.allSettled(resizing().map((animation) => animation.finished)).then(() => {
+			// A newer resize took over and will settle the label itself.
+			if (resizing().some((animation) => animation.playState === 'running')) return;
+			label.classList.remove('is-resizing');
+		});
 	}
 
 	function setText(text: string) {
@@ -56,10 +72,8 @@ export function followSections() {
 		if (!old) return;
 		const from = link!.getBoundingClientRect().width;
 
-		// Entering, the label is clipped rather than ellipsised while the link
-		// grows to fit it.
 		const next = document.createElement('span');
-		next.className = 'crumb-text is-entering';
+		next.className = 'crumb-text';
 		next.textContent = text;
 		link!.append(next);
 
@@ -69,8 +83,8 @@ export function followSections() {
 		Object.assign(old.style, { position: 'absolute', inset: '0 auto 0 0', display: 'grid', alignItems: 'center' });
 		const to = link!.getBoundingClientRect().width;
 
-		link!.animate({ width: [`${from}px`, `${to}px`] }, { duration: 320, easing: EASE_OUT }).onfinish = () =>
-			next.classList.remove('is-entering');
+		link!.animate({ width: [`${from}px`, `${to}px`] }, { duration: 320, easing: EASE_OUT });
+		clipWhileResizing(next);
 		old.animate(
 			{ opacity: [1, 0], transform: ['none', 'translateY(-70%)'], filter: ['blur(0)', 'blur(2px)'] },
 			{ duration: 200, easing: EASE_OUT, fill: 'forwards' },

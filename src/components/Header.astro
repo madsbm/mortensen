@@ -229,7 +229,9 @@ const sectionMap = (target: Lang) =>
 		text-overflow: ellipsis;
 	}
 
-	.crumb-link > :global(.crumb-text.is-entering) {
+	/* Mid-resize and on the way out, labels clip instead (see crumbs.ts). */
+	.crumb-link > :global(.crumb-text.is-resizing),
+	.crumb-link > :global(.crumb-text.is-leaving) {
 		text-overflow: clip;
 	}
 
