@@ -121,11 +121,10 @@ const person = JSON.stringify({
 			)
 		}
 		<script is:inline>
-			// Collapse the list before it paints, so it never jumps. It stays open
-			// if it was opened earlier this visit, or when coming back from one of
-			// the hidden projects, which the page transition morphs back into.
-			// Without JavaScript every project shows. The storage key is shared
-			// with src/scripts/projects.ts.
+			// Collapse the list before it paints, so it never jumps. Once opened it
+			// stays open for the visit, so coming back from a project that was
+			// hidden still has a title to morph into. Without JavaScript every
+			// project shows. The storage key is shared with src/scripts/projects.ts.
 			{
 				const list = document.querySelector('[data-projects]');
 				const more = document.querySelector('[data-projects-more]');
@@ -133,11 +132,6 @@ const person = JSON.stringify({
 				try {
 					open = sessionStorage.getItem('projects') === 'all';
 				} catch {}
-				const from = window.navigation?.activation?.from?.url || document.referrer;
-				if (from) {
-					const path = new URL(from).pathname;
-					open ||= [...list.querySelectorAll('[data-extra] a')].some((link) => link.pathname === path);
-				}
 				if (more && !open) {
 					list.dataset.collapsed = '';
 					more.hidden = false;
