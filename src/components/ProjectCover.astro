@@ -1,0 +1,48 @@
+---
+import TosCover from './covers/TosCover.astro';
+import PacketPlotsCover from './covers/PacketPlotsCover.astro';
+import SchoolCover from './covers/SchoolCover.astro';
+
+interface Props {
+	id: string;
+	kind: 'tos' | 'packetplots' | 'school';
+	class?: string;
+}
+
+const { id, kind, class: className } = Astro.props;
+---
+
+<div class:list={['cover', 'vt', className]} style={`--vt: cover-${id}`} data-vt-project={id}>
+	<div class="frame">
+		{kind === 'tos' && <TosCover />}
+		{kind === 'packetplots' && <PacketPlotsCover />}
+		{kind === 'school' && <SchoolCover />}
+	</div>
+</div>
+
+<style>
+	/* Everything inside is sized in container units, so the small list cover
+	   and the large case-study cover are exact enlargements of each other and
+	   the page transition morph lines up. */
+	.cover {
+		container-type: inline-size;
+		aspect-ratio: 16 / 10;
+	}
+
+	.frame {
+		position: relative;
+		height: 100%;
+		overflow: hidden;
+		border-radius: 1.6cqi;
+		isolation: isolate;
+	}
+
+	.frame::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		box-shadow: inset 0 0 0 1px rgb(11 11 12 / 0.06);
+		pointer-events: none;
+	}
+</style>

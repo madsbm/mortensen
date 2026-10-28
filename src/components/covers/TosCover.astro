@@ -1,0 +1,113 @@
+---
+// An illustration of tOS's subsystems styled as a boot console. It lists what
+// the kernel implements; it isn't captured output. Swap in a real boot
+// screenshot once one exists.
+const lines = [
+	{ state: 'ok', unit: 'paging', detail: '4K · 2M · 1G pages' },
+	{ state: 'ok', unit: 'alloc', detail: 'bootstrap → buddy → slab' },
+	{ state: 'ok', unit: 'apic', detail: 'interrupts online' },
+	{ state: 'ok', unit: 'acpi', detail: 'tables parsed · AML eval' },
+	{ state: 'ok', unit: 'nvme0', detail: 'ext2 mounted at /' },
+	{ state: 'ok', unit: 'e1000', detail: 'link up' },
+	{ state: 'exp', unit: 'net', detail: 'eth · arp · ipv4 · udp · tcp' },
+];
+---
+
+<div class="tos" aria-hidden="true">
+	<div class="bar">
+		<span>tOS</span>
+		<span>x86_64 · ring 0</span>
+	</div>
+	<ol class="log">
+		{
+			lines.map((line) => (
+				<li>
+					<span class:list={['state', line.state]}>{line.state === 'ok' ? ' ok ' : 'exp.'}</span>
+					<span class="unit">{line.unit}</span>
+					<span class="detail">{line.detail}</span>
+				</li>
+			))
+		}
+	</ol>
+	<p class="prompt">tos&gt;<span class="cursor"></span></p>
+</div>
+
+<style>
+	.tos {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		padding: 5cqi 6cqi;
+		background:
+			radial-gradient(120% 90% at 100% 0%, rgb(255 79 31 / 0.14), transparent 55%),
+			#0e0e10;
+		color: #d9d9dd;
+		font-family: var(--font-mono);
+		font-size: 2.15cqi;
+		line-height: 1.85;
+	}
+
+	.bar {
+		display: flex;
+		justify-content: space-between;
+		padding-bottom: 2.4cqi;
+		margin-bottom: 2.4cqi;
+		border-bottom: 1px solid rgb(255 255 255 / 0.09);
+		color: rgb(255 255 255 / 0.45);
+	}
+
+	.bar span:first-child {
+		color: #fff;
+	}
+
+	.log li {
+		display: grid;
+		grid-template-columns: 6.2ch 7ch 1fr;
+		gap: 1.6ch;
+		white-space: nowrap;
+	}
+
+	.state {
+		color: rgb(255 255 255 / 0.4);
+	}
+
+	.state::before {
+		content: '[';
+	}
+
+	.state::after {
+		content: ']';
+	}
+
+	.state.ok {
+		color: #7ee2a8;
+	}
+
+	.state.exp {
+		color: var(--accent);
+	}
+
+	.unit {
+		color: #fff;
+	}
+
+	.detail {
+		color: rgb(255 255 255 / 0.55);
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.prompt {
+		margin-top: auto;
+		color: #fff;
+	}
+
+	.cursor {
+		display: inline-block;
+		width: 1ch;
+		height: 1.15em;
+		margin-left: 1ch;
+		vertical-align: -0.2em;
+		background: var(--accent);
+	}
+</style>

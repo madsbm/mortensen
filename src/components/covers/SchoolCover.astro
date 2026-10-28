@@ -1,0 +1,192 @@
+---
+// A stylised phone screen showing the app's main views. Placeholder content,
+// not a screenshot.
+const lessons = [
+	{ time: '08:15', name: 'Mathematics', room: 'Room 204' },
+	{ time: '10:00', name: 'Physics', room: 'Lab 2', now: true },
+	{ time: '12:30', name: 'Danish', room: 'Room 117' },
+];
+---
+
+<div class="school" aria-hidden="true">
+	<div class="stat">
+		<span class="num">1,000+</span>
+		<span class="label">students used it</span>
+	</div>
+
+	<div class="phone">
+		<div class="screen">
+			<div class="head">
+				<span class="day">Tuesday</span>
+				<span class="week">Week 41</span>
+			</div>
+			<ul class="lessons">
+				{
+					lessons.map((lesson) => (
+						<li class:list={[{ now: lesson.now }]}>
+							<span class="time">{lesson.time}</span>
+							<span class="name">{lesson.name}</span>
+							<span class="room">{lesson.room}</span>
+						</li>
+					))
+				}
+			</ul>
+			<div class="cards">
+				<div><span>Homework</span><b>2 due</b></div>
+				<div><span>Books</span><b>1 out</b></div>
+			</div>
+			<div class="tabs">
+				<span class="active"></span><span></span><span></span><span></span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.school {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: end;
+		height: 100%;
+		padding: 6cqi 9cqi 0 7cqi;
+		overflow: hidden;
+		background: linear-gradient(160deg, #fff4ef 0%, #ffe3d8 100%);
+	}
+
+	.stat {
+		display: flex;
+		flex-direction: column;
+		gap: 1cqi;
+		align-self: center;
+		padding-bottom: 6cqi;
+	}
+
+	.num {
+		font-size: 9cqi;
+		font-weight: 500;
+		line-height: 0.9;
+		letter-spacing: -0.045em;
+	}
+
+	.label {
+		color: var(--ink-2);
+		font-family: var(--font-mono);
+		font-size: 1.9cqi;
+	}
+
+	.phone {
+		width: 34cqi;
+		height: 56cqi;
+		padding: 1.4cqi 1.4cqi 0;
+		border-radius: 5.5cqi 5.5cqi 0 0;
+		background: var(--ink);
+		box-shadow: 0 3cqi 6cqi -2cqi rgb(196 58 15 / 0.35);
+	}
+
+	.screen {
+		display: flex;
+		flex-direction: column;
+		gap: 2.2cqi;
+		height: 100%;
+		padding: 3.6cqi 2.8cqi 0;
+		border-radius: 4.2cqi 4.2cqi 0 0;
+		background: var(--bg);
+		font-size: 1.75cqi;
+	}
+
+	.head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+	}
+
+	.day {
+		font-size: 3cqi;
+		font-weight: 600;
+		letter-spacing: -0.03em;
+	}
+
+	.week,
+	.time,
+	.room {
+		color: var(--ink-3);
+		font-family: var(--font-mono);
+	}
+
+	.lessons {
+		display: flex;
+		flex-direction: column;
+		gap: 0.9cqi;
+	}
+
+	.lessons li {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 0.2cqi 1.8cqi;
+		padding: 1.4cqi 1.6cqi;
+		border-radius: 1.6cqi;
+		background: var(--bg-raised);
+	}
+
+	.lessons .time {
+		grid-row: span 2;
+	}
+
+	.lessons .name {
+		font-weight: 600;
+	}
+
+	.lessons .now {
+		background: var(--ink);
+		color: var(--bg);
+	}
+
+	.lessons .now .time,
+	.lessons .now .room {
+		color: rgb(255 255 255 / 0.6);
+	}
+
+	.cards {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.9cqi;
+	}
+
+	.cards div {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4cqi;
+		padding: 1.4cqi 1.6cqi;
+		border-radius: 1.6cqi;
+		background: var(--accent-wash);
+	}
+
+	.cards span {
+		color: var(--ink-2);
+	}
+
+	.cards b {
+		font-size: 2.4cqi;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+	}
+
+	.tabs {
+		display: flex;
+		justify-content: space-around;
+		margin-top: auto;
+		padding-block: 2cqi;
+		border-top: 1px solid var(--line);
+	}
+
+	.tabs span {
+		width: 2.4cqi;
+		height: 2.4cqi;
+		border-radius: 0.7cqi;
+		background: var(--line-strong);
+	}
+
+	.tabs .active {
+		background: var(--ink);
+	}
+</style>

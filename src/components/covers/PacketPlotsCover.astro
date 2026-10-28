@@ -1,0 +1,131 @@
+---
+// Two clients standing on the same chunk grid. The plot in the middle has the
+// same coordinates for both, but each client is sent a different build.
+const SIZE = 5;
+const PLOT = 12; // centre cell of a 5×5 grid
+
+// 6×6 pixel builds, one per client.
+const buildA = [
+	'..##..',
+	'.####.',
+	'######',
+	'#.##.#',
+	'#.##.#',
+	'######',
+];
+const buildB = [
+	'#....#',
+	'##..##',
+	'.####.',
+	'.####.',
+	'##..##',
+	'#....#',
+];
+
+const cells = Array.from({ length: SIZE * SIZE }, (_, i) => i);
+const views = [
+	{ id: 'a', label: 'client a', build: buildA },
+	{ id: 'b', label: 'client b', build: buildB },
+];
+---
+
+<div class="pp" aria-hidden="true">
+	{
+		views.map((view) => (
+			<figure class:list={['view', view.id]}>
+				<figcaption>
+					<span>{view.label}</span>
+					<span>plot 0,0</span>
+				</figcaption>
+				<div class="grid">
+					{cells.map((i) =>
+						i === PLOT ? (
+							<div class="cell plot">
+								{view.build.join('').split('').map((px) => (
+									<span class:list={[{ on: px === '#' }]} />
+								))}
+							</div>
+						) : (
+							<div class="cell" />
+						),
+					)}
+				</div>
+			</figure>
+		))
+	}
+	<p class="caption">same chunk · different packets</p>
+</div>
+
+<style>
+	.pp {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-template-rows: 1fr auto;
+		gap: 3cqi 5cqi;
+		height: 100%;
+		padding: 6cqi 7cqi 5cqi;
+		background: #efeee9;
+		font-family: var(--font-mono);
+		font-size: 1.9cqi;
+	}
+
+	.view {
+		display: flex;
+		flex-direction: column;
+		gap: 1.8cqi;
+		min-height: 0;
+	}
+
+	figcaption {
+		display: flex;
+		justify-content: space-between;
+		color: var(--ink-3);
+	}
+
+	figcaption span:first-child {
+		color: var(--ink);
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(5, 1fr);
+		gap: 0.7cqi;
+		aspect-ratio: 1;
+		max-height: 100%;
+		padding: 0.7cqi;
+		border-radius: 1.2cqi;
+		background: #e2e0d9;
+	}
+
+	.cell {
+		border-radius: 0.5cqi;
+		background: #f8f7f3;
+	}
+
+	.plot {
+		display: grid;
+		grid-template-columns: repeat(6, 1fr);
+		gap: 0.25cqi;
+		padding: 0.6cqi;
+		background: var(--bg);
+		box-shadow: 0 0 0 0.35cqi var(--ink);
+	}
+
+	.plot span {
+		border-radius: 0.15cqi;
+	}
+
+	.a .plot span.on {
+		background: var(--accent);
+	}
+
+	.b .plot span.on {
+		background: var(--ink);
+	}
+
+	.caption {
+		grid-column: 1 / -1;
+		color: var(--ink-3);
+		text-align: center;
+	}
+</style>
