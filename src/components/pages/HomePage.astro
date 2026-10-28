@@ -241,6 +241,29 @@ const person = JSON.stringify({
 		padding-block: clamp(56px, 8vw, 112px);
 	}
 
+	/* Parallax: while the sheet comes up, the rest of the page scrolls at a
+	   fraction of the speed and fades, so it seems to sink back beneath it.
+	   The stage ends where the sheet starts, so the stage leaving the viewport
+	   is the same scroll range as the sheet entering it. */
+	@media (prefers-reduced-motion: no-preference) {
+		@supports (animation-timeline: view()) {
+			.stage {
+				animation-name: stage-sink;
+				animation-timing-function: linear;
+				animation-fill-mode: both;
+				animation-timeline: view();
+				animation-range: exit 0% exit 100%;
+			}
+		}
+	}
+
+	@keyframes stage-sink {
+		to {
+			opacity: 0.35;
+			translate: 0 35vh;
+		}
+	}
+
 	/* ------------------------------------------------------------- projects */
 
 	.project {

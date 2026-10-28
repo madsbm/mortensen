@@ -15,8 +15,10 @@ export function followSections() {
 
 	function sectionInView() {
 		// The section crossing a line a third of the way down the viewport wins.
+		// Sections can overlap (the contact sheet slides over the page), so
+		// check from the last, which paints on top.
 		const line = innerHeight * 0.33;
-		for (const section of sections) {
+		for (const section of sections.toReversed()) {
 			const { top, bottom } = section.getBoundingClientRect();
 			if (top <= line && bottom > line) return section.dataset.section ?? null;
 		}
