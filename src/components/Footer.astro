@@ -6,13 +6,15 @@ import { site } from '../site';
 
 interface Props {
 	lang: Lang;
+	/** Continue a dark section that ends the page. */
+	inverted?: boolean;
 }
 
 const t = useTranslations(Astro.props.lang);
 const year = new Date().getFullYear();
 ---
 
-<footer class="site-footer">
+<footer class:list={['site-footer', { inverted: Astro.props.inverted }]}>
 	<div class="container inner">
 		<p class="mono">© {year} {site.name}</p>
 		{
@@ -34,7 +36,9 @@ const year = new Date().getFullYear();
 </footer>
 
 <style>
+	/* Positioned so it paints over anything translated down behind it. */
 	.site-footer {
+		position: relative;
 		border-top: 1px solid var(--line);
 		color: var(--ink-3);
 	}

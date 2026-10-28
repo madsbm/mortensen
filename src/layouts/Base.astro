@@ -31,6 +31,8 @@ interface Props {
 	alternates?: Record<Lang, string>;
 	/** Send visitors to their preferred language. Off for the 404 page. */
 	detectLanguage?: boolean;
+	/** The page ends in a dark section, so the footer is dark too. */
+	invertFooter?: boolean;
 }
 
 const {
@@ -41,6 +43,7 @@ const {
 	project,
 	alternates = alternatesFor(homePath),
 	detectLanguage = true,
+	invertFooter = false,
 } = Astro.props;
 const t = useTranslations(lang);
 const description = Astro.props.description ?? t.meta.description;
@@ -137,6 +140,6 @@ const workSegments = locales.map((l) => sections[l].work);
 		<main id="main">
 			<slot />
 		</main>
-		<Footer lang={lang} />
+		<Footer lang={lang} inverted={invertFooter} />
 	</body>
 </html>

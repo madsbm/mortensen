@@ -31,115 +31,119 @@ const person = JSON.stringify({
 });
 ---
 
-<Base lang={lang} spy>
+<Base lang={lang} spy invertFooter>
 	<script slot="head" type="application/ld+json" set:html={person} />
-	<section class="hero" aria-labelledby="hero-title">
-		<div class="container hero-inner">
-			<p class="eyebrow mono"><span class="dot" aria-hidden="true"></span>{t.hero.eyebrow}</p>
-			<h1 id="hero-title" class="display">
-				{t.hero.line1}<br />
-				<span class="muted">{t.hero.line2}</span>
-			</h1>
-			<div class="hero-foot">
-				<p class="lede">{t.hero.lede}</p>
-				<div class="actions">
-					<a class="button button-solid" href={`#${slug.work}`}>
-						{t.hero.work} <span class="arrow" aria-hidden="true">↓</span>
-					</a>
-					<a class="button button-ghost" href={`#${slug.contact}`}>{t.hero.contact}</a>
+	<div class="stage">
+		<section class="hero" aria-labelledby="hero-title">
+			<div class="container hero-inner">
+				<p class="eyebrow mono"><span class="dot" aria-hidden="true"></span>{t.hero.eyebrow}</p>
+				<h1 id="hero-title" class="display">
+					{t.hero.line1}<br />
+					<span class="muted">{t.hero.line2}</span>
+				</h1>
+				<div class="hero-foot">
+					<p class="lede">{t.hero.lede}</p>
+					<div class="actions">
+						<a class="button button-solid" href={`#${slug.work}`}>
+							{t.hero.work} <span class="arrow" aria-hidden="true">↓</span>
+						</a>
+						<a class="button button-ghost" href={`#${slug.contact}`}>{t.hero.contact}</a>
+					</div>
 				</div>
 			</div>
-		</div>
-	</section>
+		</section>
 
-	<section id={slug.work} class="container section" data-section={slug.work} aria-labelledby="work-title">
-		<div class="section-head">
-			<h2 id="work-title">{t.work.title}</h2>
-			<span class="mono">{t.work.count(pad(projects.length))}</span>
-		</div>
-
-		<ol class="projects">
-			{
-				projects.map((project) => (
-					<li class="project">
-						<span class="num mono vt" style={`--vt: num-${project.id}`} data-vt-project={project.id}>
-							{pad(project.order)}
-						</span>
-						<div class="project-text">
-							<h3 class="project-title">
-								<a href={projectPath(lang, project.id)}>
-									<span class="vt" style={`--vt: title-${project.id}`} data-vt-project={project.id}>
-										{project.title}
-									</span>
-								</a>
-							</h3>
-							<ProjectStatus lang={lang} status={project.status} />
-							<p class="tagline">{project.tagline}</p>
-							<ul class="tags mono" aria-label={t.work.topics}>
-								{project.tags.map((tag) => <li>{tag}</li>)}
-							</ul>
-							<div class="actions-row">
-								<span class="open" aria-hidden="true">
-									{t.work.open} <span class="arrow">→</span>
-								</span>
-								{project.links.map((link) => (
-									<a class="source mono" href={link.href} rel="noopener">
-										<BrandIcon name="github" label="GitHub" />
-										{repoName(link.href)}
-									</a>
-								))}
-							</div>
-						</div>
-						<ProjectCover lang={lang} id={project.id} kind={project.cover} class="project-cover" />
-					</li>
-				))
-			}
-		</ol>
-	</section>
-
-	<section id={slug.about} class="container section" data-section={slug.about} aria-labelledby="about-title">
-		<div class="section-head">
-			<h2 id="about-title">{t.about.title}</h2>
-			<span class="mono">{t.about.position}</span>
-		</div>
-
-		<div class="about-grid">
-			<div class="bio">
-				<p class="bio-lead">{t.about.lead}</p>
-				{t.about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
-				<p class="mono tenure">{t.about.tenure}</p>
+		<section id={slug.work} class="container section" data-section={slug.work} aria-labelledby="work-title">
+			<div class="section-head">
+				<h2 id="work-title">{t.work.title}</h2>
+				<span class="mono">{t.work.count(pad(projects.length))}</span>
 			</div>
 
-			<ul class="highlights">
+			<ol class="projects">
 				{
-					t.about.highlights.map((item) => (
-						<li>
-							<span class="highlight-title">{item.title}</span>
-							<span class="text">{item.text}</span>
+					projects.map((project) => (
+						<li class="project">
+							<span class="num mono vt" style={`--vt: num-${project.id}`} data-vt-project={project.id}>
+								{pad(project.order)}
+							</span>
+							<div class="project-text">
+								<h3 class="project-title">
+									<a href={projectPath(lang, project.id)}>
+										<span class="vt" style={`--vt: title-${project.id}`} data-vt-project={project.id}>
+											{project.title}
+										</span>
+									</a>
+								</h3>
+								<ProjectStatus lang={lang} status={project.status} />
+								<p class="tagline">{project.tagline}</p>
+								<ul class="tags mono" aria-label={t.work.topics}>
+									{project.tags.map((tag) => <li>{tag}</li>)}
+								</ul>
+								<div class="actions-row">
+									<span class="open" aria-hidden="true">
+										{t.work.open} <span class="arrow">→</span>
+									</span>
+									{project.links.map((link) => (
+										<a class="source mono" href={link.href} rel="noopener">
+											<BrandIcon name="github" label="GitHub" />
+											{repoName(link.href)}
+										</a>
+									))}
+								</div>
+							</div>
+							<ProjectCover lang={lang} id={project.id} kind={project.cover} class="project-cover" />
 						</li>
 					))
 				}
-			</ul>
-		</div>
+			</ol>
+		</section>
 
-		<dl class="toolkit">
-			{
-				t.about.toolkit.map((row) => (
-					<div>
-						<dt class="mono">{row.group}</dt>
-						<dd>{row.items.join(', ')}</dd>
-					</div>
-				))
-			}
-		</dl>
-	</section>
+		<section id={slug.about} class="container section" data-section={slug.about} aria-labelledby="about-title">
+			<div class="section-head">
+				<h2 id="about-title">{t.about.title}</h2>
+				<span class="mono">{t.about.position}</span>
+			</div>
 
-	<section id={slug.contact} class="container section" data-section={slug.contact} aria-labelledby="contact-title">
-		<div class="section-head">
-			<h2 id="contact-title">{t.contact.title}</h2>
-			<span class="mono">{t.contact.location}</span>
+			<div class="about-grid">
+				<div class="bio">
+					<p class="bio-lead">{t.about.lead}</p>
+					{t.about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+					<p class="mono tenure">{t.about.tenure}</p>
+				</div>
+
+				<ul class="highlights">
+					{
+						t.about.highlights.map((item) => (
+							<li>
+								<span class="highlight-title">{item.title}</span>
+								<span class="text">{item.text}</span>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+
+			<dl class="toolkit">
+				{
+					t.about.toolkit.map((row) => (
+						<div>
+							<dt class="mono">{row.group}</dt>
+							<dd>{row.items.join(', ')}</dd>
+						</div>
+					))
+				}
+			</dl>
+		</section>
+	</div>
+
+	<section id={slug.contact} class="sheet inverted" data-section={slug.contact} aria-labelledby="contact-title">
+		<div class="container sheet-inner">
+			<div class="section-head">
+				<h2 id="contact-title">{t.contact.title}</h2>
+				<span class="mono">{t.contact.location}</span>
+			</div>
+			<ContactForm lang={lang} />
 		</div>
-		<ContactForm lang={lang} />
 	</section>
 </Base>
 
@@ -220,6 +224,21 @@ const person = JSON.stringify({
 
 	.section:last-of-type {
 		padding-bottom: clamp(72px, 10vw, 140px);
+	}
+
+	/* -------------------------------------------------------------- contact */
+
+	/* A dark sheet with rounded top corners that slides up over the page. */
+	.sheet {
+		--sheet-radius: clamp(24px, 3.5vw, 44px);
+		position: relative;
+		z-index: 1;
+		border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
+		box-shadow: 0 -32px 64px -40px rgb(11 11 12 / 0.45);
+	}
+
+	.sheet-inner {
+		padding-block: clamp(56px, 8vw, 112px);
 	}
 
 	/* ------------------------------------------------------------- projects */
