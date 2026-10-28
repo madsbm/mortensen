@@ -135,12 +135,14 @@ const person = JSON.stringify({
 	</section>
 
 	<section id={slug.contact} class="sheet inverted" data-section={slug.contact} aria-labelledby="contact-title">
-		<div class="container sheet-inner">
-			<div class="section-head">
-				<h2 id="contact-title">{t.contact.title}</h2>
-				<span class="mono">{t.contact.location}</span>
+		<div class="sheet-window">
+			<div class="container sheet-inner">
+				<div class="section-head">
+					<h2 id="contact-title">{t.contact.title}</h2>
+					<span class="mono">{t.contact.location}</span>
+				</div>
+				<ContactForm lang={lang} />
 			</div>
-			<ContactForm lang={lang} />
 		</div>
 	</section>
 </Base>
@@ -222,12 +224,40 @@ const person = JSON.stringify({
 
 	/* -------------------------------------------------------------- contact */
 
-	/* A dark sheet with rounded top corners. It clips its content (without
-	   becoming a scroll container) so the content can tuck under its edge. */
+	/* A dark sheet the page lifts off. Tall enough that the page can always
+	   scroll all the way off it, even on tall screens. */
 	.sheet {
 		--sheet-radius: clamp(24px, 3.5vw, 44px);
+		position: relative;
+		min-height: calc(100vh - var(--header-space));
 		margin-top: clamp(72px, 10vw, 140px);
-		border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
+	}
+
+	/* The page above ends in rounded corners with the sheet showing behind
+	   them: the sheet's colour fills each corner outside the curve. */
+	.sheet::before,
+	.sheet::after {
+		content: '';
+		position: absolute;
+		bottom: 100%;
+		width: var(--sheet-radius);
+		height: var(--sheet-radius);
+		--curve: transparent calc(var(--sheet-radius) - 0.5px), var(--bg) calc(var(--sheet-radius) + 0.5px);
+	}
+
+	.sheet::before {
+		left: 0;
+		background: radial-gradient(circle at 100% 0, var(--curve));
+	}
+
+	.sheet::after {
+		right: 0;
+		background: radial-gradient(circle at 0 0, var(--curve));
+	}
+
+	/* Clips the content to the page's edge without becoming a scroll
+	   container, so the content's view timeline still follows the page. */
+	.sheet-window {
 		overflow: clip;
 	}
 
@@ -235,26 +265,25 @@ const person = JSON.stringify({
 		padding-block: clamp(56px, 8vw, 112px);
 	}
 
-	/* Parallax: the contact form slides out from under the page. While the
-	   sheet scrolls into view, its content starts tucked up under the page's
-	   edge and moves at a fraction of the scroll speed, settling as the
-	   sheet reaches the top. */
+	/* Parallax: the page lifts off the contact form. Until the sheet reaches
+	   the spot it settles in (just under the header), its content is held
+	   still in the viewport there, and the page's edge slides up past it. */
 	@media (prefers-reduced-motion: no-preference) {
 		@supports (animation-timeline: view()) {
 			.sheet-inner {
-				animation-name: sheet-emerge;
+				animation-name: sheet-reveal;
 				animation-timing-function: linear;
 				animation-fill-mode: both;
 				animation-timeline: view();
-				animation-range: entry 0% entry 100%;
+				animation-range: cover 0% cover calc(100vh - var(--header-space));
 			}
 		}
 	}
 
-	@keyframes sheet-emerge {
+	/* Up by the whole scroll distance of the range, so it holds still. */
+	@keyframes sheet-reveal {
 		from {
-			opacity: 0.3;
-			translate: 0 -35vh;
+			translate: 0 calc(var(--header-space) - 100vh);
 		}
 	}
 
