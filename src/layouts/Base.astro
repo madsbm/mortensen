@@ -3,6 +3,7 @@ import { Font } from 'astro:assets';
 import BinaryBackdrop from '../components/BinaryBackdrop.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ProfileRail from '../components/ProfileRail.astro';
 import type { Crumb } from '../lib/types';
 import {
 	alternatesFor,
@@ -132,6 +133,7 @@ const workSegments = locales.map((l) => sections[l].work);
 		<BinaryBackdrop />
 		<a class="skip" href="#main">{t.nav.skip}</a>
 		<Header lang={lang} alternates={alternates} crumbs={crumbs} spy={spy} />
+		<ProfileRail lang={lang} />
 		<main id="main">
 			<slot />
 		</main>

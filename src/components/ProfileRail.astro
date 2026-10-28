@@ -1,0 +1,86 @@
+---
+import BrandIcon from './BrandIcon.astro';
+import type { Lang } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+import { site } from '../site';
+
+interface Props {
+	lang: Lang;
+}
+
+const t = useTranslations(Astro.props.lang);
+---
+
+<nav class="rail vt" style="--vt: rail" aria-label={t.contact.profiles}>
+	<ul>
+		{
+			site.links.map((link) => (
+				<li>
+					<a href={link.href} rel="me noopener" aria-label={link.label}>
+						<BrandIcon name={link.icon} />
+					</a>
+				</li>
+			))
+		}
+	</ul>
+</nav>
+
+<style>
+	/* Profile links pinned to the left edge on wide screens, with a line running
+	   down to the bottom of the window. Difference blending keeps them legible
+	   on the white page and on the black contact sheet alike, so each colour
+	   here is the inverse of how it shows on white. */
+	.rail {
+		--focus: #fff;
+		position: fixed;
+		bottom: 0;
+		left: 20px;
+		z-index: 30;
+		display: none;
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+		color: #7a7a73;
+		mix-blend-mode: difference;
+	}
+
+	.rail::after {
+		content: '';
+		width: 1px;
+		height: 88px;
+		background: #3a3a3e;
+	}
+
+	ul {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	a {
+		display: grid;
+		place-items: center;
+		width: 40px;
+		height: 40px;
+		border-radius: 999px;
+		font-size: 18px;
+		transition:
+			color 200ms ease,
+			transform 200ms var(--ease-out);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		a:hover {
+			color: #f4f4f3;
+			transform: translateY(-2px);
+		}
+	}
+
+	/* Below this the gutter is too narrow; the links stay in the contact
+	   section and footer. */
+	@media (min-width: 1100px) {
+		.rail {
+			display: flex;
+		}
+	}
+</style>
