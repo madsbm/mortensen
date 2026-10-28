@@ -14,6 +14,7 @@
 	--accent-ink: #c43a0f;
 	--accent-wash: #fff1eb;
 	--focus: #0b0b0c;
+	--solid-hover: #26262a;
 
 	--pill-bg: rgb(255 255 255 / 0.8);
 	--pill-line: rgb(11 11 12 / 0.07);
@@ -29,6 +30,27 @@
 	--gutter: clamp(16px, 4.5vw, 48px);
 	--max: 1240px;
 	--header-space: 88px;
+}
+
+/* A dark surface on the light page, like the contact sheet. Components keep
+   using the same tokens and come out inverted. */
+.inverted {
+	color-scheme: dark;
+
+	--bg: #0b0b0c;
+	--bg-raised: #161618;
+	--ink: #f4f4f2;
+	--ink-2: #a9a9b0;
+	--ink-3: #808087;
+	--line: rgb(255 255 255 / 0.09);
+	--line-strong: rgb(255 255 255 / 0.18);
+	--accent-ink: #ff7a52;
+	--accent-wash: rgb(255 79 31 / 0.32);
+	--focus: #f4f4f2;
+	--solid-hover: #d9d9d5;
+
+	background: var(--bg);
+	color: var(--ink);
 }
 
 /* Wide screens keep the gutter clear for the profile rail. */
@@ -228,7 +250,7 @@ select {
 
 @media (hover: hover) and (pointer: fine) {
 	.button-solid:hover {
-		background: #26262a;
+		background: var(--solid-hover);
 	}
 
 	.button-ghost:hover {
