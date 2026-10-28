@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import ProjectCover from '../ProjectCover.astro';
 import ProjectStatus from '../ProjectStatus.astro';
 import ContactForm from '../ContactForm.astro';
+import Footer from '../Footer.astro';
 import BrandIcon from '../BrandIcon.astro';
 import { projectPath, sections, type Lang } from '../../i18n/config';
 import { useTranslations } from '../../i18n/ui';
@@ -31,7 +32,7 @@ const person = JSON.stringify({
 });
 ---
 
-<Base lang={lang} spy invertFooter>
+<Base lang={lang} spy footer={false}>
 	<script slot="head" type="application/ld+json" set:html={person} />
 	<section class="hero" aria-labelledby="hero-title">
 		<div class="container hero-inner">
@@ -134,17 +135,21 @@ const person = JSON.stringify({
 		</dl>
 	</section>
 
-	<section id={slug.contact} class="sheet inverted" data-section={slug.contact} aria-labelledby="contact-title">
+	<!-- The page lifts off this sheet, so the footer sits on it too. -->
+	<div id={slug.contact} class="sheet inverted" data-section={slug.contact}>
 		<div class="sheet-window">
-			<div class="container sheet-inner">
-				<div class="section-head">
-					<h2 id="contact-title">{t.contact.title}</h2>
-					<span class="mono">{t.contact.location}</span>
-				</div>
-				<ContactForm lang={lang} />
+			<div class="sheet-content">
+				<section class="container sheet-inner" aria-labelledby="contact-title">
+					<div class="section-head">
+						<h2 id="contact-title">{t.contact.title}</h2>
+						<span class="mono">{t.contact.location}</span>
+					</div>
+					<ContactForm lang={lang} />
+				</section>
+				<Footer lang={lang} />
 			</div>
 		</div>
-	</section>
+	</div>
 </Base>
 
 <style>
@@ -224,13 +229,15 @@ const person = JSON.stringify({
 
 	/* -------------------------------------------------------------- contact */
 
-	/* A dark sheet the page lifts off. Tall enough that the page can always
-	   scroll all the way off it, even on tall screens. */
+	/* A dark sheet the page lifts off, holding the contact section and the
+	   footer. */
 	.sheet {
 		--sheet-radius: clamp(24px, 3.5vw, 44px);
 		position: relative;
-		min-height: calc(100vh - var(--header-space));
 		margin-top: clamp(72px, 10vw, 140px);
+		/* Links to #contact scroll the sheet to the very top (or as far as the
+		   page goes), where the reveal below has finished. */
+		scroll-margin-top: calc(-1 * var(--header-space));
 	}
 
 	/* The page above ends in rounded corners with the sheet showing behind
@@ -261,29 +268,42 @@ const person = JSON.stringify({
 		overflow: clip;
 	}
 
+	/* Sized by the screen's height, so the sheet fits on a laptop and the
+	   reveal can end exactly at the bottom of the page. */
 	.sheet-inner {
-		padding-block: clamp(56px, 8vw, 112px);
+		padding-block: clamp(32px, 7vh, 80px) clamp(24px, 5vh, 56px);
 	}
 
-	/* Parallax: the page lifts off the contact form. Until the sheet reaches
-	   the spot it settles in (just under the header), its content is held
-	   still in the viewport there, and the page's edge slides up past it. */
+	/* Phones never fit the whole sheet, so its top scrolls up under the
+	   header; keep the heading clear of it. */
+	@media (max-width: 860px) {
+		.sheet-inner {
+			padding-top: var(--header-space);
+		}
+	}
+
+	/* Parallax: the page lifts off the sheet. The sheet's content is held
+	   still at the spot it settles in, while the page's edge slides up past
+	   it. The range ends once the sheet has fully come into view (the bottom
+	   of the page), or, if it's taller than the screen, once its top reaches
+	   the top of the screen; after that it scrolls normally. */
 	@media (prefers-reduced-motion: no-preference) {
 		@supports (animation-timeline: view()) {
-			.sheet-inner {
+			.sheet-content {
 				animation-name: sheet-reveal;
 				animation-timing-function: linear;
 				animation-fill-mode: both;
-				animation-timeline: view();
-				animation-range: cover 0% cover calc(100vh - var(--header-space));
+				animation-timeline: view(block 0px);
+				animation-range: entry 0% entry 100%;
 			}
 		}
 	}
 
-	/* Up by the whole scroll distance of the range, so it holds still. */
+	/* Up by the scroll distance of that range, so it holds still: its own
+	   height, or the screen's if that's less. */
 	@keyframes sheet-reveal {
 		from {
-			translate: 0 calc(var(--header-space) - 100vh);
+			translate: 0 calc(-1 * min(100%, 100vh));
 		}
 	}
 
