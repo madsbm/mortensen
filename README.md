@@ -66,7 +66,7 @@ Both are skipped for `prefers-reduced-motion`, and the backdrop needs a fine poi
 
 ## Contact sheet
 
-The contact section is a dark sheet (`.inverted` swaps the colour tokens, so the form and buttons invert without their own dark styles). The page above it ends in rounded corners, and scrolling lifts the page off the sheet: the contact section and the footer (which sits on the sheet) hold still exactly where they end up at the bottom of the page, while the page's edge slides up past them. The sheet's spacing scales with the screen's height so it fits on laptop screens; where it can't fit (phones), it holds still until the page is gone, then scrolls normally. That's a CSS scroll-driven animation (`animation-timeline: view()`) that offsets the content by exactly the distance scrolled, so it runs off the main thread. Browsers without support, or with reduced motion, simply scroll the sheet in.
+The contact section is a dark sheet (`.inverted` swaps the colour tokens, so the form and buttons invert without their own dark styles). The page above it ends in rounded corners, and scrolling lifts the page off the sheet: the contact section and the footer (which sits on the sheet) hold still exactly where they end up at the bottom of the page, while the page's edge slides up past them. The sheet's spacing scales with the screen's height so it fits on laptop screens; where it can't fit (phones), it holds still until the page is gone, then scrolls normally. It's plain `position: sticky` (the content sticks to both edges of the screen inside a clipped window that reaches up under the page), so it moves in step with scrolling in every browser. With reduced motion the sheet simply scrolls in.
 
 ## Contact form
 
