@@ -11,7 +11,7 @@
 const NOISE = 0.4;
 const ACCENT = '255 79 31';
 // The faintest level, as a fraction of the strongest.
-const FAINT = 0.2;
+const FAINT = 0.16;
 // Positions are fractions of the screen, radii fractions of its longer side.
 // The rail sits bottom left, so that corner is left out.
 const shapes = [
