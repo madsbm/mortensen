@@ -14,13 +14,14 @@ export function followSections() {
 	let current: string | null = null;
 
 	function sectionInView() {
-		// The section crossing a line a third of the way down the viewport wins.
+		// The last section to reach a line a third of the way down the viewport
+		// wins, so the slug holds across any gap before the next one.
 		const line = innerHeight * 0.33;
+		let inView: string | null = null;
 		for (const section of sections) {
-			const { top, bottom } = section.getBoundingClientRect();
-			if (top <= line && bottom > line) return section.dataset.section ?? null;
+			if (section.getBoundingClientRect().top <= line) inView = section.dataset.section ?? null;
 		}
-		return null;
+		return inView;
 	}
 
 	function show(slug: string | null) {
