@@ -6,21 +6,30 @@ import ProjectStatus from '../../components/ProjectStatus.astro';
 
 export async function getStaticPaths() {
 	const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+	const at = (i: number) => projects[(i + projects.length) % projects.length];
 	return projects.map((project, i) => ({
 		params: { slug: project.id },
-		props: { project, next: projects[(i + 1) % projects.length] },
+		props: { project, previous: at(i - 1), next: at(i + 1) },
 	}));
 }
 
 interface Props {
 	project: CollectionEntry<'projects'>;
+	previous: CollectionEntry<'projects'>;
 	next: CollectionEntry<'projects'>;
 }
 
-const { project, next } = Astro.props;
+const { project, previous, next } = Astro.props;
 const { id, data } = project;
 const { Content } = await render(project);
 const pad = (n: number) => String(n).padStart(2, '0');
+
+// Each title can only carry its transition name once per page, so with fewer
+// than three projects the pager drops duplicates (and the current project).
+const pager = [
+	{ rel: 'prev', label: 'Previous', entry: previous },
+	{ rel: 'next', label: 'Next', entry: next },
+].filter(({ entry }, i, all) => entry.id !== id && all.findIndex((p) => p.entry.id === entry.id) === i);
 ---
 
 <Base
@@ -94,15 +103,26 @@ const pad = (n: number) => String(n).padStart(2, '0');
 		</div>
 	</article>
 
-	<nav class="container next" aria-label="Next project">
-		<a href={`/work/${next.id}`}>
-			<span class="mono label">Next project · {pad(next.data.order)}</span>
-			<span class="next-title">
-				<span class="vt" style={`--vt: title-${next.id}`} data-vt-project={next.id}>{next.data.title}</span>
-				<span class="arrow" aria-hidden="true">→</span>
-			</span>
-		</a>
-	</nav>
+	{
+		pager.length > 0 && (
+			<nav class="container pager" aria-label="More projects">
+				{pager.map(({ rel, label, entry }) => (
+					<a href={`/work/${entry.id}`} rel={rel} class={rel}>
+						<span class="mono label">
+							{label} · {pad(entry.data.order)}
+						</span>
+						<span class="pager-title">
+							{rel === 'prev' && <span class="arrow" aria-hidden="true">←</span>}
+							<span class="vt" style={`--vt: title-${entry.id}`} data-vt-project={entry.id}>
+								{entry.data.title}
+							</span>
+							{rel === 'next' && <span class="arrow" aria-hidden="true">→</span>}
+						</span>
+					</a>
+				))}
+			</nav>
+		)
+	}
 </Base>
 
 <style>
@@ -269,11 +289,14 @@ const pad = (n: number) => String(n).padStart(2, '0');
 		color: var(--ink);
 	}
 
-	.next {
+	.pager {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 24px;
 		padding-block: clamp(72px, 10vw, 140px);
 	}
 
-	.next a {
+	.pager a {
 		display: flex;
 		flex-direction: column;
 		gap: 14px;
@@ -281,25 +304,33 @@ const pad = (n: number) => String(n).padStart(2, '0');
 		border-top: 1px solid var(--line);
 	}
 
+	.pager .next {
+		grid-column: 2;
+		align-items: flex-end;
+		text-align: right;
+	}
+
 	.label {
 		color: var(--ink-3);
 	}
 
-	.next-title {
+	.pager-title {
 		display: flex;
 		align-items: baseline;
 		gap: 0.3em;
-		font-size: clamp(2.25rem, 6vw, 4.5rem);
+		max-width: 100%;
+		font-size: clamp(2rem, 5vw, 4rem);
 		font-weight: 500;
 		line-height: 1;
 		letter-spacing: -0.045em;
 	}
 
-	.next-title span:first-child {
+	.pager-title .vt {
 		display: inline-block;
+		min-width: 0;
 	}
 
-	.next .arrow {
+	.pager .arrow {
 		color: var(--ink-3);
 		transition:
 			transform 300ms var(--ease-out),
@@ -307,9 +338,31 @@ const pad = (n: number) => String(n).padStart(2, '0');
 	}
 
 	@media (hover: hover) and (pointer: fine) {
-		.next a:hover .arrow {
+		.pager a:hover .arrow {
 			color: var(--ink);
+		}
+
+		.pager .next:hover .arrow {
 			transform: translateX(6px);
+		}
+
+		.pager .prev:hover .arrow {
+			transform: translateX(-6px);
+		}
+	}
+
+	@media (max-width: 640px) {
+		.pager {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 0;
+		}
+
+		.pager .next {
+			grid-column: 1;
+		}
+
+		.pager-title {
+			font-size: 2rem;
 		}
 	}
 
