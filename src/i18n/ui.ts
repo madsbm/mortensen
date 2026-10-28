@@ -56,7 +56,12 @@ const en = {
 			title: 'Timeline',
 			// The details show on hover. An event can have none.
 			events: [
-				{ when: '2018', title: 'Started programming', details: [] as string[] },
+				{
+					when: '2018',
+					title: 'Started programming',
+					details: ['Skript, for Minecraft servers', 'Sold my scripts to server owners for pocket money'],
+				},
+				{ when: '2023', title: 'Started at HTX', details: ['Technical high school at Tradium', 'Mathematics A and Informatics B'] },
 				{
 					when: '2023',
 					title: 'Launched Lectimate',
@@ -79,9 +84,8 @@ const en = {
 				},
 				{
 					when: '2026',
-					title: 'Graduated high school (HTX)',
+					title: 'Graduated from HTX',
 					details: [
-						'Tradium, Mathematics A and Informatics B',
 						'GPA 10.9 out of 12',
 						'Final project (SOP) on cryptography in secure network protocols: Ed25519/X25519, RSA, HMAC, SHA, AES-CFB',
 						'SOP graded 12, the top grade',
@@ -227,7 +231,12 @@ const da: Dictionary = {
 		timeline: {
 			title: 'Tidslinje',
 			events: [
-				{ when: '2018', title: 'Begyndte at programmere', details: [] },
+				{
+					when: '2018',
+					title: 'Begyndte at programmere',
+					details: ['Skript til Minecraft-servere', 'Solgte mine scripts til serverejere for lommepenge'],
+				},
+				{ when: '2023', title: 'Startede på HTX', details: ['Tradium', 'Matematik A og Informatik B'] },
 				{
 					when: '2023',
 					title: 'Lancerede Lectimate',
@@ -252,7 +261,6 @@ const da: Dictionary = {
 					when: '2026',
 					title: 'Student fra HTX',
 					details: [
-						'Tradium, Matematik A og Informatik B',
 						'Karaktergennemsnit 10,9',
 						'SOP om kryptografi i sikre netværksprotokoller: Ed25519/X25519, RSA, HMAC, SHA, AES-CFB',
 						'SOP: 12',
