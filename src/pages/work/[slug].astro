@@ -2,6 +2,7 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import ProjectCover from '../../components/ProjectCover.astro';
+import ProjectStatus from '../../components/ProjectStatus.astro';
 
 export async function getStaticPaths() {
 	const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
@@ -36,6 +37,14 @@ const pad = (n: number) => String(n).padStart(2, '0');
 			<span class="num mono vt" style={`--vt: num-${id}`} data-vt-project={id}>{pad(data.order)}</span>
 			<h1><span class="vt" style={`--vt: title-${id}`} data-vt-project={id}>{data.title}</span></h1>
 			<p class="tagline">{data.tagline}</p>
+			{
+				data.notice && (
+					<p class="notice" role="note">
+						<ProjectStatus status={data.status} />
+						<span>{data.notice}</span>
+					</p>
+				)
+			}
 		</header>
 
 		<ProjectCover id={id} kind={data.cover} class="case-cover" />
@@ -43,17 +52,25 @@ const pad = (n: number) => String(n).padStart(2, '0');
 		<div class="case-body">
 			<dl class="facts">
 				<div>
-					<dt class="mono">Role</dt>
-					<dd>{data.role}</dd>
-				</div>
-				<div>
 					<dt class="mono">Status</dt>
-					<dd>{data.status}</dd>
+					<dd><ProjectStatus status={data.status} /></dd>
 				</div>
-				<div>
-					<dt class="mono">Stack</dt>
-					<dd>{data.stack.join(', ')}</dd>
-				</div>
+				{
+					data.role && (
+						<div>
+							<dt class="mono">Role</dt>
+							<dd>{data.role}</dd>
+						</div>
+					)
+				}
+				{
+					data.stack.length > 0 && (
+						<div>
+							<dt class="mono">Stack</dt>
+							<dd>{data.stack.join(', ')}</dd>
+						</div>
+					)
+				}
 				{
 					data.links.length > 0 && (
 						<div>
@@ -125,6 +142,21 @@ const pad = (n: number) => String(n).padStart(2, '0');
 		line-height: 1.35;
 		letter-spacing: -0.015em;
 		text-wrap: pretty;
+	}
+
+	.notice {
+		grid-column: 2;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px 14px;
+		justify-self: start;
+		padding: 12px 18px;
+		border: 1px solid var(--line-strong);
+		border-radius: 14px;
+		background: var(--bg-raised);
+		color: var(--ink-2);
+		font-size: 0.9375rem;
 	}
 
 	.case-body {
@@ -290,7 +322,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
 			padding-top: 0;
 		}
 
-		.tagline {
+		.tagline,
+		.notice {
 			grid-column: 1;
 		}
 

@@ -1,11 +1,12 @@
 ---
 import TosCover from './covers/TosCover.astro';
+import RelayCover from './covers/RelayCover.astro';
 import PacketPlotsCover from './covers/PacketPlotsCover.astro';
-import SchoolCover from './covers/SchoolCover.astro';
+import LectimateCover from './covers/LectimateCover.astro';
 
 interface Props {
 	id: string;
-	kind: 'tos' | 'packetplots' | 'school';
+	kind: 'tos' | 'relay' | 'packetplots' | 'lectimate';
 	class?: string;
 }
 
@@ -15,8 +16,9 @@ const { id, kind, class: className } = Astro.props;
 <div class:list={['cover', 'vt', className]} style={`--vt: cover-${id}`} data-vt-project={id}>
 	<div class="frame">
 		{kind === 'tos' && <TosCover />}
+		{kind === 'relay' && <RelayCover />}
 		{kind === 'packetplots' && <PacketPlotsCover />}
-		{kind === 'school' && <SchoolCover />}
+		{kind === 'lectimate' && <LectimateCover />}
 	</div>
 </div>
 

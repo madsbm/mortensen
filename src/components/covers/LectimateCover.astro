@@ -1,5 +1,5 @@
 ---
-// A stylised phone screen showing the app's main views. Placeholder content,
+// A stylised phone screen showing Lectimate's main views. Placeholder content,
 // not a screenshot.
 const lessons = [
 	{ time: '08:15', name: 'Mathematics', room: 'Room 204' },
@@ -8,17 +8,18 @@ const lessons = [
 ];
 ---
 
-<div class="school" aria-hidden="true">
+<div class="lectimate" aria-hidden="true">
 	<div class="stat">
 		<span class="num">1,000+</span>
 		<span class="label">students used it</span>
+		<span class="retired">Discontinued</span>
 	</div>
 
 	<div class="phone">
 		<div class="screen">
 			<div class="head">
 				<span class="day">Tuesday</span>
-				<span class="week">Week 41</span>
+				<span class="week">Lectimate</span>
 			</div>
 			<ul class="lessons">
 				{
@@ -43,7 +44,7 @@ const lessons = [
 </div>
 
 <style>
-	.school {
+	.lectimate {
 		display: grid;
 		grid-template-columns: 1fr auto;
 		align-items: end;
@@ -72,6 +73,17 @@ const lessons = [
 		color: var(--ink-2);
 		font-family: var(--font-mono);
 		font-size: 1.9cqi;
+	}
+
+	.retired {
+		align-self: flex-start;
+		margin-top: 2.4cqi;
+		padding: 0.7cqi 1.6cqi;
+		border: 1px solid rgb(11 11 12 / 0.18);
+		border-radius: 99cqi;
+		color: var(--ink-2);
+		font-family: var(--font-mono);
+		font-size: 1.7cqi;
 	}
 
 	.phone {

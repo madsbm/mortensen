@@ -1,13 +1,14 @@
 ---
-order: 3
-title: School companion
-tagline: A student app that reached 1,000+ users while I was still in high school.
+order: 4
+title: Lectimate
+tagline: A school companion app that reached 1,000+ users while I was still in high school.
 summary: Lecture calendar, homework, assignments, absence and borrowed library books in one place. I built it independently and ran it until it was shut down.
+notice: Lectimate is no longer developed. It was shut down after reaching more than 1,000 users.
 tags: [Product, Mobile, Adoption]
+status: Discontinued
 role: Built independently
-status: Retired
 stack: [App development, Product design]
-cover: school
+cover: lectimate
 ---
 
 ## What it did
@@ -25,4 +26,4 @@ I built it independently while I was still in high school. It reached **more tha
 
 ## What it led to
 
-The app helped me land my current job at Side-Walk. Its source isn't public, but the lesson is: build something real people rely on every day, and keep it working.
+Lectimate helped me land my current job at Side-Walk. Its source isn't public, but the lesson stuck: build something real people rely on every day, and keep it working.

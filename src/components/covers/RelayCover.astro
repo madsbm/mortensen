@@ -1,0 +1,149 @@
+---
+// Tasks flow in from several sources, through Relay, into a memory that grows
+// over time. A diagram of the idea, not a screenshot.
+const sources = ['email', 'jira', '+ more'];
+const memory = [
+	{ label: 'wk 1', fill: 0.18 },
+	{ label: 'wk 4', fill: 0.42 },
+	{ label: 'wk 8', fill: 0.66 },
+	{ label: 'wk 12', fill: 0.9, now: true },
+];
+const NODE = { x: 68, y: 38, w: 32, h: 24 };
+const PANEL = { x: 112, y: 20, w: 38, h: 60 };
+---
+
+<div class="relay" aria-hidden="true">
+	<svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid meet">
+		{
+			sources.map((source, i) => {
+				const y = 26 + i * 20;
+				return (
+					<g>
+						<path
+							class="wire"
+							d={`M 48 ${y + 5.5} C 58 ${y + 5.5}, 58 50, ${NODE.x} 50`}
+						/>
+						<rect class="chip" x="12" y={y} width="36" height="11" rx="5.5" />
+						<text class="chip-text" x="30" y={y + 7.1} text-anchor="middle">
+							{source}
+						</text>
+					</g>
+				);
+			})
+		}
+
+		<path class="wire strong" d={`M ${NODE.x + NODE.w} 50 L ${PANEL.x} 50`} />
+
+		<rect class="node" x={NODE.x} y={NODE.y} width={NODE.w} height={NODE.h} rx="6" />
+		<circle class="dot" cx={NODE.x + NODE.w - 5} cy={NODE.y + 5} r="1.4" />
+		<text class="node-text" x={NODE.x + NODE.w / 2} y={NODE.y + NODE.h / 2 + 1.8} text-anchor="middle">
+			relay
+		</text>
+
+		<rect class="panel" x={PANEL.x} y={PANEL.y} width={PANEL.w} height={PANEL.h} rx="4" />
+		<text class="panel-title" x={PANEL.x + 5} y={PANEL.y + 9}>memory</text>
+		{
+			memory.map((row, i) => {
+				const y = PANEL.y + 17 + i * 10.5;
+				const width = PANEL.w - 10;
+				return (
+					<g>
+						<text class="row-label" x={PANEL.x + 5} y={y}>
+							{row.label}
+						</text>
+						<rect class="track" x={PANEL.x + 5} y={y + 2} width={width} height="2.6" rx="1.3" />
+						<rect
+							class:list={['bar', { now: row.now }]}
+							x={PANEL.x + 5}
+							y={y + 2}
+							width={width * row.fill}
+							height="2.6"
+							rx="1.3"
+						/>
+					</g>
+				);
+			})
+		}
+	</svg>
+</div>
+
+<style>
+	.relay {
+		height: 100%;
+		background:
+			radial-gradient(70% 60% at 50% 50%, rgb(255 255 255 / 0.8), transparent 70%),
+			#eceef1;
+	}
+
+	svg {
+		width: 100%;
+		height: 100%;
+		font-family: var(--font-mono);
+	}
+
+	.wire {
+		fill: none;
+		stroke: #b8bdc6;
+		stroke-width: 0.45;
+	}
+
+	.wire.strong {
+		stroke: var(--ink);
+		stroke-width: 0.5;
+	}
+
+	.chip {
+		fill: var(--bg);
+		stroke: #d3d7de;
+		stroke-width: 0.35;
+	}
+
+	.chip-text {
+		fill: var(--ink);
+		font-size: 3.9px;
+	}
+
+	.node {
+		fill: var(--ink);
+	}
+
+	.dot {
+		fill: var(--accent);
+	}
+
+	.node-text {
+		fill: #fff;
+		font-family: var(--font-sans);
+		font-size: 5.6px;
+		font-weight: 500;
+		letter-spacing: -0.02em;
+	}
+
+	.panel {
+		fill: var(--bg);
+		stroke: #d3d7de;
+		stroke-width: 0.35;
+	}
+
+	.panel-title {
+		fill: var(--ink-3);
+		font-size: 3.4px;
+	}
+
+	.row-label {
+		fill: var(--ink-2);
+		font-size: 2.9px;
+	}
+
+	.track {
+		fill: #eceef1;
+	}
+
+	.bar {
+		fill: var(--ink);
+	}
+
+	.bar.now {
+		fill: var(--accent);
+	}
+</style>

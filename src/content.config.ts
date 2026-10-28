@@ -10,10 +10,12 @@ const projects = defineCollection({
 		tagline: z.string(),
 		summary: z.string(),
 		tags: z.array(z.string()),
-		role: z.string(),
-		status: z.string(),
-		stack: z.array(z.string()),
-		cover: z.enum(['tos', 'packetplots', 'school']),
+		status: z.enum(['In development', 'Complete', 'Discontinued']),
+		/** Shown prominently at the top of the case study. */
+		notice: z.string().optional(),
+		role: z.string().optional(),
+		stack: z.array(z.string()).default([]),
+		cover: z.enum(['tos', 'relay', 'packetplots', 'lectimate']),
 		links: z.array(z.object({ label: z.string(), href: z.url() })).default([]),
 	}),
 });
