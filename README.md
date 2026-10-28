@@ -66,7 +66,7 @@ Both are skipped for `prefers-reduced-motion`, and the backdrop needs a fine poi
 
 ## Contact sheet
 
-The contact section is a dark sheet with rounded top corners (`.inverted` swaps the colour tokens, so the form and buttons invert without their own dark styles). As it scrolls into view, its content starts tucked under the edge of the page and moves at a fraction of the scroll speed, so the form seems to slide out from under the page. That parallax is a CSS scroll-driven animation (`animation-timeline: view()`), so it runs off the main thread, and browsers without support or with reduced motion simply scroll normally.
+The contact section is a dark sheet (`.inverted` swaps the colour tokens, so the form and buttons invert without their own dark styles). The page above it ends in rounded corners, and scrolling lifts the page off the sheet: the contact content holds still in the viewport, at the spot it settles in, while the page's edge slides up past it. That's a CSS scroll-driven animation (`animation-timeline: view()`) that offsets the content by exactly the distance scrolled, so it runs off the main thread. Browsers without support, or with reduced motion, simply scroll the sheet in.
 
 ## Contact form
 
