@@ -25,12 +25,14 @@ src/
 │   ├── ProjectCover.astro + covers/   HTML-drawn project covers
 │   ├── CanvasFx.astro  Wraps live HTML in a Canvas UI effect
 │   ├── BinaryBackdrop.astro   The binary layer behind every page
+│   ├── ProfileRail.astro      GitHub and LinkedIn pinned to the left edge
+│   ├── BrandIcon.astro        GitHub and LinkedIn logos
 │   └── ContactForm.astro
 ├── pages/              Thin routes: / and /work/<id>, /da/ and /da/arbejde/<id>
 ├── layouts/Base.astro  Page shell, fonts, language redirect, view transition scoping
 ├── lib/canvasui/       Vendored Canvas UI effects (see their LICENSE.md)
 ├── scripts/            Breadcrumb ticker, effect mounting, contact form, language switch
-├── styles/global.css   Tokens, base styles and view transition animations
+├── styles/global.css   Tokens (plus an `.inverted` dark scope), base styles, view transitions
 └── site.ts             Name, email, profile links, origin trial token
 ```
 
@@ -57,10 +59,14 @@ Transition names are only applied under `prefers-reduced-motion: no-preference`.
 
 Two [Canvas UI](https://canvasui.dev) effects, built for the experimental [HTML-in-Canvas API](https://developer.chrome.com/docs/web-platform/html-in-canvas/2d):
 
-- **Binary backdrop** (Asciify): a hidden layer behind the page resolves into 1s and 0s around the mouse. `src/scripts/backdrop.ts` paints the artwork it reads: per-cell noise decides which digit lands where, and a few soft shapes add density and the accent tint. Asciify ships its own DOM capture fallback, so this works in every browser with a mouse, flag or not.
+- **Binary backdrop** (Asciify): a hidden layer behind the page resolves into 1s and 0s around the mouse. `src/scripts/backdrop.ts` paints the artwork it reads: per-cell noise decides which digit lands where, and accent shapes along the screen edges tint the digits red. The same shapes mask the effect's output, so the digits fade out towards the centre where the text is. Asciify ships its own DOM capture fallback, so this works in every browser with a mouse, flag or not.
 - **Ripple**: one ripple across the contact form when it opens your mail app. It needs the real API, so it only runs where html-in-canvas is available. To see it now, enable `chrome://flags/#canvas-draw-element`. To turn it on for visitors, register for the Chrome origin trial and paste the token into `originTrialToken` in `src/site.ts`.
 
 Both are skipped for `prefers-reduced-motion`, and the backdrop needs a fine pointer.
+
+## Contact sheet
+
+The contact section is a dark sheet with rounded top corners (`.inverted` swaps the colour tokens, so the form and buttons invert without their own dark styles). As it slides up, the rest of the home page scrolls at a fraction of the speed and fades, so it seems to sink beneath the sheet. That parallax is a CSS scroll-driven animation (`animation-timeline: view()`), so it runs off the main thread, and browsers without support or with reduced motion simply scroll normally.
 
 ## Contact form
 
