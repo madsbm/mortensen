@@ -125,6 +125,131 @@ const en = {
 
 export type Dictionary = typeof en;
 
-export const ui: Record<Lang, Dictionary> = { en };
+const da: Dictionary = {
+	meta: {
+		role: 'Softwareudvikler',
+		description:
+			'Mads Bech Mortensen er softwareudvikler i Danmark og arbejder med systemprogrammering, concurrency, netværk og produktionsinfrastruktur.',
+	},
+	nav: {
+		home: (name: string) => `${name}, forside`,
+		breadcrumb: 'Brødkrumme',
+		primary: 'Primær',
+		work: 'Arbejde',
+		about: 'Om',
+		contact: 'Kontakt',
+		skip: 'Spring til indhold',
+	},
+	hero: {
+		eyebrow: 'Softwareudvikler · Danmark',
+		line1: 'Low-level af lyst.',
+		line2: 'Full-stack af fag.',
+		lede: 'Jeg hedder Mads og er softwareudvikler med fokus på systemprogrammering, concurrency og netværk. Til daglig bygger og hærder jeg produktionsplatforme hos Side-Walk. I fritiden skriver jeg tOS, et bare-metal x86_64-styresystem i Rust.',
+		work: 'Se mit arbejde',
+		contact: 'Kontakt mig',
+	},
+	work: {
+		title: 'Udvalgt arbejde',
+		count: (n: string) => `${n} projekter`,
+		topics: 'Emner',
+		open: 'Læs om projektet',
+	},
+	about: {
+		title: 'Om mig',
+		position: 'Softwareudvikler hos Side-Walk ApS',
+		lead: 'Jeg kan lide problemer, hvor både korrekthed og ydeevne betyder noget, og jeg kan lide at eje dem fra start til slut.',
+		paragraphs: [
+			'Hos Side-Walk arbejder jeg på tværs af hele livscyklussen: arkitektur, implementering, deployment, vedligeholdelse og optimering. Det omfatter selvstændige gennemgange og overtagelser af ukendte kodebaser for større virksomheder samt performancearbejde på webapplikationer, databaser og spilservere.',
+			'Jeg har også designet og udrullet zero trust-adgang til vores interne systemer, bygget på identitetsbaseret adgangskontrol, automatisk provisionering, mTLS og kortlivede SSH-certifikater.',
+		],
+		tenure: 'Deltid gennem gymnasiet · fuldtid siden 2026',
+		highlights: [
+			{ title: 'Livesystemer under pres', text: 'Ombygning af produktionssystemer, så de holder til mange samtidige brugere.' },
+			{ title: 'Platforme, en forretning kører på', text: 'Udvikling og drift af forretningskritisk software fra start til slut.' },
+			{ title: 'Zero trust-sikkerhed', text: 'Design og udrulning af identitetsbaseret adgang til interne systemer.' },
+		],
+		toolkit: [
+			{
+				group: 'Systemer',
+				items: ['Rust', 'x86_64', 'Linux', 'Hukommelseshåndtering', 'Concurrency', 'Netværksprotokoller'],
+			},
+			{
+				group: 'Infrastruktur & sikkerhed',
+				items: ['Cloudflare Zero Trust', 'Entra ID · OIDC · SCIM', 'mTLS', 'Smallstep SSH', 'Docker', 'Kubernetes', 'CI/CD'],
+			},
+			{ group: 'Applikationer', items: ['TypeScript', 'Java · Netty', 'Laravel', 'Databaser', 'Performanceoptimering'] },
+		],
+	},
+	contact: {
+		title: 'Kontakt',
+		location: 'Danmark',
+		lead: 'Har du en stilling, et projekt eller et svært problem? Skriv til mig.',
+		note: 'Formularen åbner en udfyldt mail i dit eget mailprogram. Intet bliver sendt fra denne side.',
+		reveal: 'Vis mailadresse',
+		noscript: 'Slå JavaScript til for at se adressen.',
+		profiles: 'Profiler',
+		name: 'Navn',
+		subject: 'Emne',
+		optional: 'Valgfrit',
+		message: 'Besked',
+		submit: 'Åbn i mailprogram',
+		client: {
+			defaultSubject: 'Hej fra {name}',
+			opening: 'Åbner dit mailprogram…',
+			fallbackBefore: 'Skete der ikke noget? ',
+			fallbackButton: 'Kopiér adressen',
+			fallbackAfter: ' i stedet.',
+			copy: 'Kopiér',
+			copied: 'Kopieret',
+			copyFailed: 'Kunne ikke kopiere',
+			copiedToClipboard: 'Kopieret til udklipsholderen.',
+		},
+	},
+	project: {
+		status: 'Status',
+		role: 'Rolle',
+		stack: 'Teknologier',
+		links: 'Links',
+		more: 'Flere projekter',
+		previous: 'Forrige',
+		next: 'Næste',
+		source: 'Kildekode på GitHub',
+	},
+	status: {
+		active: 'Under udvikling',
+		complete: 'Færdig',
+		discontinued: 'Udgået',
+	},
+	covers: {
+		packetplots: { client: (id: string) => `klient ${id}`, caption: 'samme chunk · forskellige pakker' },
+		relay: { sources: ['e-mail', 'jira', '+ flere'], memory: 'hukommelse', week: (n: number) => `uge ${n}` },
+		lectimate: {
+			count: '1.000+',
+			users: 'elever brugte den',
+			day: 'Tirsdag',
+			lessons: [
+				{ time: '08:15', name: 'Matematik', room: 'Lokale 204' },
+				{ time: '10:00', name: 'Fysik', room: 'Lab 2' },
+				{ time: '12:30', name: 'Dansk', room: 'Lokale 117' },
+			],
+			homework: 'Lektier',
+			homeworkValue: '2 åbne',
+			books: 'Bøger',
+			booksValue: '1 lånt',
+		},
+	},
+	footer: {
+		top: 'Til toppen',
+	},
+	notFound: {
+		title: 'Ikke fundet',
+		code: 'fejl 404 · siden findes ikke',
+		heading: 'Intet er mappet til denne adresse.',
+		note: 'Siden er måske flyttet, eller linket er skrevet forkert.',
+		back: 'Tilbage til forsiden',
+	},
+};
+
+export const ui: Record<Lang, Dictionary> = { en, da };
 
 export const useTranslations = (lang: Lang) => ui[lang];

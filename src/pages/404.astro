@@ -1,19 +1,39 @@
 ---
 import Base from '../layouts/Base.astro';
-import { homePath } from '../i18n/config';
-import { useTranslations } from '../i18n/ui';
+import { defaultLang, homePath, locales } from '../i18n/config';
+import { ui } from '../i18n/ui';
+import { site } from '../site';
 
-const lang = 'en';
-const t = useTranslations(lang).notFound;
+// A static host serves this one page for every missing address, so it holds
+// each language and shows the one matching the path that was asked for.
+const prefixes = Object.fromEntries(locales.map((lang) => [lang, homePath(lang)]));
+const titles = Object.fromEntries(locales.map((lang) => [lang, `${ui[lang].notFound.title} — ${site.name}`]));
 ---
 
-<Base lang={lang} title={t.title} crumbs={[{ label: '404', href: '/404', current: true }]}>
-	<section class="container missing">
-		<p class="mono code">{t.code}</p>
-		<h1>{t.heading}</h1>
-		<p class="note">{t.note}</p>
-		<a class="button button-solid" href={homePath(lang)}>{t.back} <span class="arrow" aria-hidden="true">→</span></a>
-	</section>
+<Base lang={defaultLang} title={ui[defaultLang].notFound.title} crumbs={[{ label: '404', href: '/404', current: true }]}>
+	{
+		locales.map((lang) => {
+			const t = ui[lang].notFound;
+			return (
+				<section class="container missing" lang={lang} data-lang={lang} hidden={lang !== defaultLang}>
+					<p class="mono code">{t.code}</p>
+					<h1>{t.heading}</h1>
+					<p class="note">{t.note}</p>
+					<a class="button button-solid" href={homePath(lang)}>
+						{t.back} <span class="arrow" aria-hidden="true">→</span>
+					</a>
+				</section>
+			);
+		})
+	}
+	<script is:inline define:vars={{ prefixes, titles }}>
+		const lang = Object.keys(prefixes).find((l) => prefixes[l] !== '/' && location.pathname.startsWith(prefixes[l]));
+		if (lang) {
+			for (const el of document.querySelectorAll('[data-lang]')) el.hidden = el.dataset.lang !== lang;
+			document.documentElement.lang = lang;
+			document.title = titles[lang];
+		}
+	</script>
 </Base>
 
 <style>
@@ -25,6 +45,10 @@ const t = useTranslations(lang).notFound;
 		gap: 24px;
 		min-height: 88svh;
 		padding-top: 120px;
+	}
+
+	.missing[hidden] {
+		display: none;
 	}
 
 	.code {
