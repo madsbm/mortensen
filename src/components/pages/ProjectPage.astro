@@ -11,8 +11,9 @@ import { pad, repoName, type Project } from '../../lib/projects';
 interface Props {
 	lang: Lang;
 	project: Project;
-	previous: Project;
-	next: Project;
+	/** The neighbours in list order: none before the first, none after the last. */
+	previous?: Project;
+	next?: Project;
 }
 
 const { lang, project, previous, next } = Astro.props;
@@ -20,12 +21,10 @@ const { id } = project;
 const t = useTranslations(lang);
 const { Content } = await render(project.writeup);
 
-// Each title can only carry its transition name once per page, so with fewer
-// than three projects the pager drops duplicates (and the current project).
 const pager = [
 	{ rel: 'prev', label: t.project.previous, entry: previous },
 	{ rel: 'next', label: t.project.next, entry: next },
-].filter(({ entry }, i, all) => entry.id !== id && all.findIndex((p) => p.entry.id === entry.id) === i);
+].flatMap(({ entry, ...link }) => (entry ? [{ ...link, entry }] : []));
 ---
 
 <Base

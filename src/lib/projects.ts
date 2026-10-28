@@ -24,10 +24,9 @@ export async function getProjects(lang: Lang): Promise<Project[]> {
 /** getStaticPaths for the case study route of one language. */
 export async function projectPaths(lang: Lang) {
 	const projects = await getProjects(lang);
-	const at = (i: number) => projects[(i + projects.length) % projects.length];
 	return projects.map((project, i) => ({
 		params: { slug: project.id },
-		props: { lang, project, previous: at(i - 1), next: at(i + 1) },
+		props: { lang, project, previous: projects[i - 1], next: projects[i + 1] },
 	}));
 }
 
