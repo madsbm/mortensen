@@ -18,6 +18,7 @@ src/
 │   ├── Header.astro    The pill header and its breadcrumb slugs
 │   ├── ProjectCover.astro + covers/   HTML-drawn project covers
 │   ├── CanvasFx.astro  Wraps live HTML in a Canvas UI effect
+│   ├── BinaryBackdrop.astro   The binary layer behind every page
 │   └── ContactForm.astro
 ├── layouts/Base.astro  Page shell, fonts and view transition scoping
 ├── lib/canvasui/       Vendored Canvas UI effects (see their LICENSE.md)
@@ -32,14 +33,14 @@ Navigation uses native cross-document view transitions (`@view-transition { navi
 
 Transition names are only applied under `prefers-reduced-motion: no-preference`. With reduced motion, pages simply crossfade.
 
-## HTML-in-Canvas effects
+## Canvas effects
 
-Two [Canvas UI](https://canvasui.dev) effects run on the experimental [HTML-in-Canvas API](https://developer.chrome.com/docs/web-platform/html-in-canvas/2d):
+Two [Canvas UI](https://canvasui.dev) effects, built for the experimental [HTML-in-Canvas API](https://developer.chrome.com/docs/web-platform/html-in-canvas/2d):
 
-- **Glass**: a lens that follows the cursor over the hero and magnifies the headline.
-- **Ripple**: one ripple across the contact form when it opens your mail app.
+- **Binary backdrop** (Asciify): a hidden layer behind the page resolves into 1s and 0s around the mouse. `src/scripts/backdrop.ts` paints the artwork it reads: per-cell noise decides which digit lands where, and a few soft shapes add density and the accent tint. Asciify ships its own DOM capture fallback, so this works in every browser with a mouse, flag or not.
+- **Ripple**: one ripple across the contact form when it opens your mail app. It needs the real API, so it only runs where html-in-canvas is available. To see it now, enable `chrome://flags/#canvas-draw-element`. To turn it on for visitors, register for the Chrome origin trial and paste the token into `originTrialToken` in `src/site.ts`.
 
-Both are native-only. Without the API the page renders as plain HTML and nothing is lost. To see them now, enable `chrome://flags/#canvas-draw-element`. To turn them on for visitors, register for the Chrome origin trial and paste the token into `originTrialToken` in `src/site.ts`.
+Both are skipped for `prefers-reduced-motion`, and the backdrop needs a fine pointer.
 
 ## Contact form
 
