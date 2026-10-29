@@ -104,7 +104,7 @@ const edge = (column: number, size: number, span: number) =>
 	}
 	<div class="group languages">
 		<p class="label mono">{languages.label}</p>
-		<div class="tiles" style={`--rows: ${languageRows}; --shown: ${shown}`}>
+		<div class="tiles" style={`--rows: ${languageRows}; --shown: ${shown}`} data-languages>
 			<ul class="skills">
 				{languageTiles.map((skill) => (
 					<li class="cell skill" style={skill.style} data-card data-tile data-folded={skill.folded ? '' : undefined}>
@@ -404,8 +404,8 @@ const edge = (column: number, size: number, span: number) =>
 
 	/* With a mouse, the languages past the first column's first few are
 	   tucked in behind their neighbours, and fold out one after another
-	   (down the first column, then out into the next) whenever the grid is
-	   hovered or has focus. */
+	   (down the first column, then out into the next) while the pointer is
+	   near them (skills.ts marks that) or a key moves onto one of them. */
 	@media (hover: hover) and (pointer: fine) {
 		.more {
 			display: flex;
@@ -424,7 +424,7 @@ const edge = (column: number, size: number, span: number) =>
 				transform 200ms var(--ease-out);
 		}
 
-		.skill-grid:is(:hover, :focus-within) .languages [data-folded] {
+		.tiles:is([data-open], :focus-within) [data-folded] {
 			opacity: 1;
 			pointer-events: auto;
 			transform: none;
@@ -433,7 +433,7 @@ const edge = (column: number, size: number, span: number) =>
 				transform 300ms var(--ease-out) calc(var(--fold) * 30ms);
 		}
 
-		.skill-grid:is(:hover, :focus-within) .more {
+		.tiles:is([data-open], :focus-within) .more {
 			opacity: 0;
 		}
 	}
