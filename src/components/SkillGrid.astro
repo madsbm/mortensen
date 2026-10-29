@@ -404,19 +404,9 @@ const edge = (column: number, size: number, span: number) =>
 
 	/* With a mouse, the languages past the first column's first few are
 	   tucked in behind their neighbours, and fold out one after another
-	   (down the first column, then out into the next) while the languages
-	   are hovered or a key moves onto one of them. */
+	   (down the first column, then out into the next) whenever the grid is
+	   hovered or has focus. */
 	@media (hover: hover) and (pointer: fine) {
-		/* The languages answer to the pointer from the divider to well past
-		   their tiles, so it needn't land on them first. Underneath them, so
-		   their own hover still works. */
-		.languages::after {
-			content: '';
-			position: absolute;
-			inset: -16px -100px -16px calc(var(--pitch) / -2);
-			z-index: -1;
-		}
-
 		.more {
 			display: flex;
 			transition: opacity 150ms ease;
@@ -434,7 +424,7 @@ const edge = (column: number, size: number, span: number) =>
 				transform 200ms var(--ease-out);
 		}
 
-		.languages:is(:hover, :focus-within) [data-folded] {
+		.skill-grid:is(:hover, :focus-within) .languages [data-folded] {
 			opacity: 1;
 			pointer-events: auto;
 			transform: none;
@@ -443,7 +433,7 @@ const edge = (column: number, size: number, span: number) =>
 				transform 300ms var(--ease-out) calc(var(--fold) * 30ms);
 		}
 
-		.languages:is(:hover, :focus-within) .more {
+		.skill-grid:is(:hover, :focus-within) .more {
 			opacity: 0;
 		}
 	}
