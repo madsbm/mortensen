@@ -27,17 +27,6 @@ const en = {
 		// one show as a single square.
 		groups: [
 			{
-				group: 'Languages',
-				items: [
-					{ name: 'Rust', icon: 'rust' },
-					{ name: 'TypeScript', icon: 'typescript' },
-					{ name: 'Java', icon: 'java' },
-					{ name: 'PHP', icon: 'php' },
-					{ name: 'C#', icon: 'csharp' },
-					{ name: 'Python', icon: 'python' },
-				],
-			},
-			{
 				group: 'Web & apps',
 				items: [
 					{ name: 'Laravel', icon: 'laravel' },
@@ -69,6 +58,19 @@ const en = {
 				],
 			},
 		],
+		// Beside the grid. The first few show; the rest fold out on hover.
+		languages: {
+			label: 'In languages such as',
+			more: (n: number) => `& ${n} more`,
+			items: [
+				{ name: 'Rust', icon: 'rust' },
+				{ name: 'TypeScript', icon: 'typescript' },
+				{ name: 'Java', icon: 'java' },
+				{ name: 'PHP', icon: 'php' },
+				{ name: 'C#', icon: 'csharp' },
+				{ name: 'Python', icon: 'python' },
+			],
+		},
 	},
 	work: {
 		title: 'Selected work',
@@ -232,17 +234,6 @@ const da: Dictionary = {
 	skills: {
 		groups: [
 			{
-				group: 'Sprog',
-				items: [
-					{ name: 'Rust', icon: 'rust' },
-					{ name: 'TypeScript', icon: 'typescript' },
-					{ name: 'Java', icon: 'java' },
-					{ name: 'PHP', icon: 'php' },
-					{ name: 'C#', icon: 'csharp' },
-					{ name: 'Python', icon: 'python' },
-				],
-			},
-			{
 				group: 'Web & apps',
 				items: [
 					{ name: 'Laravel', icon: 'laravel' },
@@ -274,6 +265,18 @@ const da: Dictionary = {
 				],
 			},
 		],
+		languages: {
+			label: 'I sprog som',
+			more: (n: number) => `& ${n} flere`,
+			items: [
+				{ name: 'Rust', icon: 'rust' },
+				{ name: 'TypeScript', icon: 'typescript' },
+				{ name: 'Java', icon: 'java' },
+				{ name: 'PHP', icon: 'php' },
+				{ name: 'C#', icon: 'csharp' },
+				{ name: 'Python', icon: 'python' },
+			],
+		},
 	},
 	work: {
 		title: 'Udvalgt arbejde',

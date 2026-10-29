@@ -31,12 +31,16 @@ const groups = layoutSkills(
 	return { ...group, empty };
 });
 
-// On a phone the blocks sit two to a row, and the wider pair (counting the
-// space between them) sets the size of the squares.
-let fit = 0;
-for (let i = 0; i < groups.length; i += 2) {
-	fit = Math.max(fit, groups[i].span + (groups[i + 1] ? groups[i + 1].span + 1 : 0));
-}
+// Languages sit after the blocks, past a dividing line. Only the first few
+// show until the rest fold out.
+const languages = t.skills.languages;
+const shown = 2;
+const last = groups[groups.length - 1];
+const languagesStart = last.start + last.span + 2;
+
+// On a phone each block takes a row of its own, and the widest one (or the
+// row of languages) sets the size of the squares.
+const fit = Math.max(...groups.map((group) => group.span), languages.items.length * tile);
 
 // The ripple's timing follows the diagonal across all the blocks in a row.
 const place = (row: number, column: number, start: number, size = 1) =>
@@ -49,9 +53,9 @@ const edge = (column: number, size: number, span: number) =>
 
 <!--
 	The skills as a contribution graph: each skill lights up a square (a tile
-	with its icon, if it has one) in a block under its group's label. A skill
-	shows its name on hover, tap or focus. The blocks sit in one row, or two
-	on phones.
+	with its icon, if it has one) in a block under its group's label, and the
+	languages follow in a row of their own. A skill shows its name on hover,
+	tap or focus. Everything sits in one row, wrapping on narrow screens.
 -->
 <div class:list={['skill-grid', className]} style={`--fit: ${fit}`} data-skill-grid>
 	{
@@ -82,6 +86,33 @@ const edge = (column: number, size: number, span: number) =>
 			</div>
 		))
 	}
+	<div class="group languages">
+		<p class="label mono">{languages.label}</p>
+		<div
+			class="tiles"
+			style={`--count: ${languages.items.length}; --half: ${Math.ceil(languages.items.length / 2)}; --shown: ${shown}`}
+		>
+			<ul class="skills">
+				{languages.items.map((skill, i) => (
+					<li
+						class="cell skill"
+						style={`--d: ${languagesStart + i * tile}; --fold: ${i - shown + 1}`}
+						data-card
+						data-tile
+						data-folded={i >= shown ? '' : undefined}
+					>
+						<button type="button" tabindex="-1" data-skill>
+							<SkillIcon name={skill.icon} />
+							<span class="name">{skill.name}</span>
+						</button>
+					</li>
+				))}
+			</ul>
+			<span class="more mono" aria-hidden="true">
+				{languages.more(languages.items.length - shown)}
+			</span>
+		</div>
+	</div>
 </div>
 
 <script>
@@ -90,9 +121,10 @@ const edge = (column: number, size: number, span: number) =>
 </script>
 
 <style>
-	/* Squares about the size of GitHub's, shrinking on a phone so two blocks
-	   fit side by side within the page's gutters. */
-	/* An empty column's width between blocks. */
+	/* Squares about the size of GitHub's, shrinking on a phone so the widest
+	   block fits within the page's gutters, and an empty column's width
+	   between blocks. Anything left of the grid is clipped (bar a focus
+	   ring), so a divider at the start of a wrapped line never shows. */
 	.skill-grid {
 		--gap: 4px;
 		--pitch: min(22px, (100vw - 2 * var(--gutter) + var(--gap)) / var(--fit));
@@ -102,6 +134,7 @@ const edge = (column: number, size: number, span: number) =>
 		gap: 18px var(--pitch);
 		width: fit-content;
 		max-width: 100%;
+		clip-path: inset(-100vh -100vw -100vh -6px);
 	}
 
 	.group {
@@ -126,6 +159,65 @@ const edge = (column: number, size: number, span: number) =>
 		gap: var(--gap);
 	}
 
+	/* Past a dividing line, the languages in a row of tiles. Their label
+	   runs on past the tiles rather than wrapping when they stack up. */
+	.languages {
+		position: relative;
+		align-content: start;
+	}
+
+	.languages .label {
+		white-space: nowrap;
+	}
+
+	.languages::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: calc(var(--pitch) / -2);
+		width: 1px;
+		background: var(--line);
+	}
+
+	.tiles {
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(var(--count), var(--tile));
+		grid-auto-rows: var(--tile);
+		gap: var(--gap);
+	}
+
+	/* Over the ones still folded away, when they fold (see below). */
+	.more {
+		position: absolute;
+		top: 0;
+		left: calc(var(--shown) * 2 * var(--pitch));
+		display: none;
+		align-items: center;
+		height: var(--tile);
+		padding-left: 6px;
+		color: var(--ink-3);
+		font-size: 0.75rem;
+		white-space: nowrap;
+	}
+
+	/* Where the blocks can't share a line, the languages stack into two
+	   rows beside the first block, rather than taking a line of their own. */
+	@media (max-width: 860px) {
+		.languages {
+			order: 1;
+		}
+
+		.group:nth-child(n + 2):not(.languages) {
+			order: 2;
+		}
+
+		.tiles {
+			grid-template-columns: repeat(var(--half), var(--tile));
+		}
+	}
+
 	.skills {
 		display: contents;
 	}
@@ -144,10 +236,6 @@ const edge = (column: number, size: number, span: number) =>
 		border-radius: inherit;
 		background: var(--accent);
 		opacity: 0;
-	}
-
-	.skill {
-		transition: opacity 200ms ease;
 	}
 
 	.skill::after {
@@ -288,14 +376,61 @@ const edge = (column: number, size: number, span: number) =>
 			color: var(--ink);
 		}
 
-		.skill-grid:has(.skill:hover, .skill :focus-visible) .group:not(:has(.skill:hover, .skill :focus-visible)) .skill {
+		.cells,
+		.tiles {
+			transition: opacity 200ms ease;
+		}
+
+		.skill-grid:has(.skill:hover, .skill :focus-visible) .group:not(:has(.skill:hover, .skill :focus-visible)) :is(.cells, .tiles) {
 			opacity: 0.35;
+		}
+	}
+
+	/* With a mouse and the languages in one row, those past the first few
+	   are tucked in behind the last one showing, and fold out to the right,
+	   one after another, while the row is hovered or a key moves onto one of
+	   them. */
+	@media (hover: hover) and (pointer: fine) and (min-width: 861px) {
+		.more {
+			display: flex;
+			transition: opacity 150ms ease;
+		}
+
+		.languages .skill:not([data-folded]) {
+			z-index: 1;
+		}
+
+		.languages [data-folded] {
+			opacity: 0;
+			pointer-events: none;
+			transform: translateX(calc(var(--fold) * -2 * var(--pitch)));
+			transition:
+				opacity 150ms ease,
+				transform 200ms var(--ease-out);
+		}
+
+		.languages:is(:hover, :focus-within) [data-folded] {
+			opacity: 1;
+			pointer-events: auto;
+			transform: none;
+			transition:
+				opacity 200ms ease calc(var(--fold) * 30ms),
+				transform 300ms var(--ease-out) calc(var(--fold) * 30ms);
+		}
+
+		.languages:is(:hover, :focus-within) .more {
+			opacity: 0;
 		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
 		.name {
 			transform: translateX(var(--x)) !important;
+		}
+
+		/* The languages fade in where they are. */
+		.languages [data-folded] {
+			transform: none !important;
 		}
 	}
 </style>
