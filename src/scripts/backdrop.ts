@@ -6,18 +6,26 @@
 // Per-cell noise gives a scattered mix of 1s and 0s. Accent shapes in the
 // margins tint the digits there, and the same shapes mask the effect's
 // output: digits only stand out inside a shape, outside the text column and
-// clear of the profile rail. Everywhere else they stay at the faintest level.
+// clear of the profile rail. They also stand out in the empty space at the
+// top of a page, above an element marked data-backdrop-zone. Everywhere else
+// they stay at the faintest level.
 
 const NOISE = 0.4;
 const ACCENT = '255 79 31';
 // The faintest level, as a fraction of the strongest.
 const FAINT = 0.16;
+// The level in the empty space at the top, and how far above the marked
+// element it fades out.
+const TOP = 0.8;
+const TOP_FADE = 120;
 // Positions are fractions of the screen, radii fractions of its longer side.
-// The rail sits bottom left, so that corner is left out.
+// The rail sits bottom left, so that corner is left out. The one at the top
+// centre only tints the space at the top; the margins cut the rest of it.
 const shapes = [
 	{ x: 0, y: 0.18, r: 0.42, alpha: 0.5 },
 	{ x: 1, y: 0.28, r: 0.46, alpha: 0.55 },
 	{ x: 1, y: 0.92, r: 0.38, alpha: 0.45 },
+	{ x: 0.5, y: 0, r: 0.32, alpha: 0.3 },
 ];
 
 export function paintBackdrop() {
@@ -28,9 +36,14 @@ export function paintBackdrop() {
 
 	// Mask layers, top first, each composited onto the result of those below:
 	// the shapes are unioned, cut to the margins (BinaryBackdrop.astro defines
-	// those layers), and the faint level is added over everything.
+	// those layers), then the space at the top and the faint level are added
+	// over everything. --top-zone is where that space ends on screen.
 	const layers = [
 		[`linear-gradient(rgb(0 0 0 / ${FAINT}) 0 0)`, 'add'],
+		[
+			`linear-gradient(rgb(0 0 0 / ${TOP}) calc(var(--top-zone, 0px) - ${TOP_FADE}px), transparent var(--top-zone, 0px))`,
+			'add',
+		],
 		['var(--backdrop-margins)', 'intersect'],
 		['var(--backdrop-rail)', 'intersect'],
 		...shapes.map(({ x, y, r }) => [
@@ -88,4 +101,38 @@ export function paintBackdrop() {
 
 	draw();
 	new ResizeObserver(draw).observe(canvas);
+
+	const zone = document.querySelector<HTMLElement>('[data-backdrop-zone]');
+	if (zone) followTopZone(root, zone);
+}
+
+// The backdrop is fixed to the screen, but the space at the top belongs to
+// the page, so its edge moves up as the page scrolls, until it's gone.
+function followTopZone(root: HTMLElement, zone: HTMLElement) {
+	let top = 0;
+	let shown = -1;
+	const update = () => {
+		const edge = Math.max(0, Math.round(top - scrollY));
+		if (edge === shown) return;
+		shown = edge;
+		root.style.setProperty('--top-zone', `${edge}px`);
+	};
+	const measure = () => {
+		top = zone.getBoundingClientRect().top + scrollY;
+		update();
+	};
+
+	let frame = 0;
+	function onScroll() {
+		if (frame) return;
+		frame = requestAnimationFrame(() => {
+			frame = 0;
+			update();
+		});
+	}
+
+	addEventListener('scroll', onScroll, { passive: true });
+	new ResizeObserver(measure).observe(document.documentElement);
+	document.fonts.ready.then(measure);
+	measure();
 }

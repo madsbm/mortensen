@@ -39,7 +39,7 @@ const person = JSON.stringify({
 	<script slot="head" type="application/ld+json" set:html={person} />
 	<section class="hero" aria-labelledby="hero-title">
 		<div class="container hero-inner">
-			<div class="hero-top">
+			<div class="hero-top" data-backdrop-zone>
 				<SkillGrid lang={lang} />
 				<div class="hero-meta">
 					<ul class="profiles mono" aria-label={t.contact.profiles}>
