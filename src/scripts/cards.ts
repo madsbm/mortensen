@@ -1,6 +1,6 @@
-// Hover cards (like the timeline's stops) open on hover or focus. Escape
-// hides an open card until the pointer or focus moves on, so it never has to
-// stay over the page.
+// Hover cards (the timeline's stops, the skill grid's names) open on hover or
+// focus. Escape hides an open card until the pointer or focus moves on, so it
+// never has to stay over the page.
 
 export function setUpCards() {
 	const cards = [...document.querySelectorAll<HTMLElement>('[data-card]')];

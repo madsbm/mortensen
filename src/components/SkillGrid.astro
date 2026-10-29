@@ -1,0 +1,301 @@
+---
+import SkillIcon from './SkillIcon.astro';
+import type { Lang } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+import { layoutSkills, rows } from '../lib/skills';
+
+interface Props {
+	lang: Lang;
+	class?: string;
+}
+
+const { lang, class: className } = Astro.props;
+const t = useTranslations(lang);
+// Skills with an icon get a tile big enough to show it.
+const tile = 2;
+const groups = layoutSkills(
+	t.skills.groups.map(({ group, items }) => ({
+		group,
+		items: items.map((item) => ({ ...item, size: item.icon ? tile : 1 })),
+	})),
+).map((group) => {
+	const covered = new Set(
+		group.skills.flatMap(({ row, column, size }) =>
+			Array.from({ length: size * size }, (_, i) => `${row + Math.floor(i / size)}:${column + (i % size)}`),
+		),
+	);
+	const empty = Array.from({ length: rows * group.span }, (_, i) => ({
+		row: Math.floor(i / group.span),
+		column: i % group.span,
+	})).filter(({ row, column }) => !covered.has(`${row}:${column}`));
+	return { ...group, empty };
+});
+
+// On a phone the blocks sit two to a row, and the wider pair (counting the
+// space between them) sets the size of the squares.
+let fit = 0;
+for (let i = 0; i < groups.length; i += 2) {
+	fit = Math.max(fit, groups[i].span + (groups[i + 1] ? groups[i + 1].span + 1 : 0));
+}
+
+// The ripple's timing follows the diagonal across all the blocks in a row.
+const place = (row: number, column: number, start: number, size = 1) =>
+	`grid-area: ${row + 1} / ${column + 1} / span ${size} / span ${size}; --d: ${row + start + column}`;
+// Names at either end of a block open towards its middle, so they stay on
+// screen when the blocks wrap.
+const edge = (column: number, size: number, span: number) =>
+	column < 1 ? 'start' : column + size >= span ? 'end' : undefined;
+---
+
+<!--
+	The skills as a contribution graph: each skill lights up a square (a tile
+	with its icon, if it has one) in a block under its group's label. A skill
+	shows its name on hover, tap or focus. The blocks sit in one row, or two
+	on phones.
+-->
+<div class:list={['skill-grid', className]} style={`--fit: ${fit}`} data-skill-grid>
+	{
+		groups.map((group, g) => (
+			<div class="group">
+				<p class="label mono">{group.label}</p>
+				<div class="cells" style={`--span: ${group.span}`}>
+					{group.empty.map(({ row, column }) => (
+						<span class="cell" style={place(row, column, group.start)} aria-hidden="true" />
+					))}
+					<ul class="skills">
+						{group.skills.map((skill, i) => (
+							<li
+								class="cell skill"
+								style={place(skill.row, skill.column, group.start, skill.size)}
+								data-card
+								data-tile={skill.icon ? '' : undefined}
+								data-edge={edge(skill.column, skill.size, group.span)}
+							>
+								<button type="button" tabindex={g === 0 && i === 0 ? 0 : -1} data-skill>
+									{skill.icon && <SkillIcon name={skill.icon} />}
+									<span class="name">{skill.name}</span>
+								</button>
+							</li>
+						))}
+					</ul>
+				</div>
+			</div>
+		))
+	}
+</div>
+
+<script>
+	import { setUpSkillGrid } from '../scripts/skills';
+	setUpSkillGrid();
+</script>
+
+<style>
+	/* Squares about the size of GitHub's, shrinking on a phone so two blocks
+	   fit side by side within the page's gutters. */
+	/* An empty column's width between blocks. */
+	.skill-grid {
+		--gap: 4px;
+		--pitch: min(22px, (100vw - 2 * var(--gutter) + var(--gap)) / var(--fit));
+		--tile: calc(2 * var(--pitch) - var(--gap));
+		display: flex;
+		flex-wrap: wrap;
+		gap: 18px var(--pitch);
+		width: fit-content;
+		max-width: 100%;
+	}
+
+	.group {
+		display: grid;
+		gap: 8px;
+	}
+
+	/* As wide as the block, and no wider: it wraps rather than widening it. */
+	.label {
+		width: 0;
+		min-width: 100%;
+		color: var(--ink-3);
+		font-size: 0.6875rem;
+		line-height: 1.3;
+		transition: color 200ms ease;
+	}
+
+	.cells {
+		display: grid;
+		grid-template-columns: repeat(var(--span), calc(var(--pitch) - var(--gap)));
+		grid-auto-rows: calc(var(--pitch) - var(--gap));
+		gap: var(--gap);
+	}
+
+	.skills {
+		display: contents;
+	}
+
+	/* An empty square, with the accent laid over it when it holds a skill. */
+	.cell {
+		position: relative;
+		border-radius: 4px;
+		background: var(--bg-raised);
+	}
+
+	.cell::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		background: var(--accent);
+		opacity: 0;
+	}
+
+	.skill {
+		transition: opacity 200ms ease;
+	}
+
+	.skill::after {
+		opacity: 1;
+	}
+
+	.skill[data-tile] {
+		border-radius: 7px;
+		color: #fff;
+		font-size: calc(var(--tile) * 0.5);
+	}
+
+	/* Fills the square, so focus has something to land on that keyboards
+	   and assistive tech know is interactive. It names the skill. */
+	.skill button {
+		display: grid;
+		place-items: center;
+		width: 100%;
+		height: 100%;
+		padding: 0;
+		border: 0;
+		border-radius: inherit;
+		background: none;
+		cursor: default;
+	}
+
+	.skill button:focus {
+		outline: none;
+	}
+
+	.skill button:focus-visible {
+		outline: 2px solid var(--focus);
+		outline-offset: 2px;
+	}
+
+	/* Over the accent. */
+	.skill :global(.skill-icon) {
+		position: relative;
+		z-index: 1;
+	}
+
+	/* On every load, a ripple runs across the grid from the top left,
+	   lighting each square as it passes and leaving the skills lit. */
+	@keyframes glint {
+		40% {
+			opacity: 0.3;
+		}
+	}
+
+	@keyframes light {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.cell::after {
+			animation: glint 600ms ease calc(150ms + var(--d) * 18ms);
+		}
+
+		.skill::after,
+		.skill :global(.skill-icon) {
+			animation: light 400ms var(--ease-out) calc(150ms + var(--d) * 18ms) backwards;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.skill::after,
+		.skill :global(.skill-icon) {
+			animation: light 200ms ease backwards;
+		}
+	}
+
+	/* The name, in a small card above the skill. */
+	.name {
+		--x: -50%;
+		position: absolute;
+		bottom: calc(100% + 8px);
+		left: 50%;
+		z-index: 3;
+		padding: 6px 10px;
+		border-radius: 8px;
+		background: var(--bg);
+		box-shadow:
+			var(--pill-shadow),
+			inset 0 0 0 1px var(--pill-line);
+		color: var(--ink);
+		font-size: 0.8125rem;
+		line-height: 1.3;
+		white-space: nowrap;
+		opacity: 0;
+		pointer-events: none;
+		transform: translateX(var(--x)) translateY(4px) scale(0.97);
+		transform-origin: center bottom;
+		transition:
+			opacity 150ms ease,
+			transform 150ms var(--ease-out);
+	}
+
+	.skill[data-edge='start'] .name {
+		--x: 0;
+		left: 0;
+		transform-origin: left bottom;
+	}
+
+	.skill[data-edge='end'] .name {
+		--x: 0;
+		left: auto;
+		right: 0;
+		transform-origin: right bottom;
+	}
+
+	.skill:has(:focus-visible):not([data-dismissed]) .name {
+		opacity: 1;
+		transform: translateX(var(--x));
+		transition-duration: 200ms;
+	}
+
+	/* Touch screens focus a skill on tap. */
+	@media (hover: none) {
+		.skill:focus-within:not([data-dismissed]) .name {
+			opacity: 1;
+			transform: translateX(var(--x));
+			transition-duration: 200ms;
+		}
+	}
+
+	/* With a mouse, the open skill's group stands out and the rest step
+	   back. */
+	@media (hover: hover) and (pointer: fine) {
+		.skill:hover:not([data-dismissed]) .name {
+			opacity: 1;
+			transform: translateX(var(--x));
+			transition-duration: 200ms;
+		}
+
+		.group:has(.skill:hover, .skill :focus-visible) .label {
+			color: var(--ink);
+		}
+
+		.skill-grid:has(.skill:hover, .skill :focus-visible) .group:not(:has(.skill:hover, .skill :focus-visible)) .skill {
+			opacity: 0.35;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.name {
+			transform: translateX(var(--x)) !important;
+		}
+	}
+</style>

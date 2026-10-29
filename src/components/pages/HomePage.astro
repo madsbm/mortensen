@@ -5,6 +5,7 @@ import ProjectStatus from '../ProjectStatus.astro';
 import ContactForm from '../ContactForm.astro';
 import Footer from '../Footer.astro';
 import BrandIcon from '../BrandIcon.astro';
+import SkillGrid from '../SkillGrid.astro';
 import { projectPath, sections, type Lang } from '../../i18n/config';
 import { useTranslations } from '../../i18n/ui';
 import { getProjects, pad, repoName } from '../../lib/projects';
@@ -38,7 +39,10 @@ const person = JSON.stringify({
 	<script slot="head" type="application/ld+json" set:html={person} />
 	<section class="hero" aria-labelledby="hero-title">
 		<div class="container hero-inner">
-			<p class="eyebrow mono"><span class="dot" aria-hidden="true"></span>{t.hero.eyebrow}</p>
+			<div class="hero-top">
+				<SkillGrid lang={lang} />
+				<p class="eyebrow mono"><span class="dot" aria-hidden="true"></span>{t.hero.eyebrow}</p>
+			</div>
 			<h1 id="hero-title" class="display">{site.name}</h1>
 			<div class="hero-foot">
 				<p class="lede">{t.hero.lede}</p>
@@ -50,22 +54,6 @@ const person = JSON.stringify({
 				</div>
 			</div>
 		</div>
-	</section>
-
-	<section class="container section" aria-labelledby="skills-title">
-		<div class="section-head">
-			<h2 id="skills-title">{t.skills.title}</h2>
-		</div>
-		<dl class="skills">
-			{
-				t.skills.groups.map((row) => (
-					<div>
-						<dt class="mono">{row.group}</dt>
-						<dd>{row.items.join(', ')}</dd>
-					</div>
-				))
-			}
-		</dl>
 	</section>
 
 	<section id={slug.work} class="container section" data-section={slug.work} aria-labelledby="work-title">
@@ -212,6 +200,17 @@ const person = JSON.stringify({
 		}
 	}
 
+	/* The skill grid and the eyebrow share a line above the name, the grid
+	   lined up with its first letter and the eyebrow on the right. Where they
+	   don't fit side by side, the eyebrow drops below the grid. */
+	.hero-top {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 28px 48px;
+	}
+
 	.eyebrow {
 		display: flex;
 		align-items: center;
@@ -345,42 +344,6 @@ const person = JSON.stringify({
 			position: sticky;
 			top: 0;
 			bottom: 0;
-		}
-	}
-
-	/* --------------------------------------------------------------- skills */
-
-	.skills {
-		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-		gap: 32px;
-		padding-top: clamp(24px, 3vw, 36px);
-	}
-
-	.skills div {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.skills dt {
-		color: var(--ink-3);
-	}
-
-	.skills dd {
-		color: var(--ink);
-		line-height: 1.6;
-	}
-
-	@media (max-width: 1100px) {
-		.skills {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-	}
-
-	@media (max-width: 560px) {
-		.skills {
-			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 
