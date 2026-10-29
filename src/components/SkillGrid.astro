@@ -407,6 +407,16 @@ const edge = (column: number, size: number, span: number) =>
 	   (down the first column, then out into the next) while the languages
 	   are hovered or a key moves onto one of them. */
 	@media (hover: hover) and (pointer: fine) {
+		/* The languages answer to the pointer from the divider to well past
+		   their tiles, so it needn't land on them first. Underneath them, so
+		   their own hover still works. */
+		.languages::after {
+			content: '';
+			position: absolute;
+			inset: -16px -100px -16px calc(var(--pitch) / -2);
+			z-index: -1;
+		}
+
 		.more {
 			display: flex;
 			transition: opacity 150ms ease;
