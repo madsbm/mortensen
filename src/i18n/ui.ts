@@ -39,7 +39,7 @@ const en = {
 				],
 			},
 			{
-				group: 'Infrastructure',
+				group: 'Systems & Infrastructure',
 				items: [
 					{ name: 'x86_64', icon: 'x86' },
 					{ name: 'Linux', icon: 'linux' },
@@ -246,7 +246,7 @@ const da: Dictionary = {
 				],
 			},
 			{
-				group: 'Infrastruktur',
+				group: 'Systemer & Infrastruktur',
 				items: [
 					{ name: 'x86_64', icon: 'x86' },
 					{ name: 'Linux', icon: 'linux' },
