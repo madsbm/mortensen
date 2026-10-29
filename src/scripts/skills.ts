@@ -3,8 +3,9 @@
 // name. With a mouse, the folded languages open while the pointer is near
 // them.
 
-// How close the pointer has to come to the middle of the languages.
-const reach = 100;
+// How close the pointer has to come to the middle of the languages: a
+// circle reaching well past them on every side.
+const reach = 200;
 
 export function setUpSkillGrid() {
 	const grid = document.querySelector<HTMLElement>('[data-skill-grid]');
