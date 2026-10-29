@@ -145,7 +145,7 @@ const person = JSON.stringify({
 			<ol class="timeline" aria-label={t.about.timeline.title}>
 				{
 					t.about.timeline.events.map((event, i, events) => (
-						<li class="stop" tabindex="0" data-stop data-now={i === events.length - 1 ? '' : undefined}>
+						<li class="stop" tabindex="0" data-card data-now={i === events.length - 1 ? '' : undefined}>
 							<span class="when mono">{event.when}</span>
 							<span class="road" aria-hidden="true" />
 							<span class="what">{event.title}</span>
@@ -188,9 +188,9 @@ const person = JSON.stringify({
 
 <script>
 	import { setUpProjectList } from '../../scripts/projects';
-	import { setUpTimeline } from '../../scripts/timeline';
+	import { setUpCards } from '../../scripts/cards';
 	setUpProjectList();
-	setUpTimeline();
+	setUpCards();
 </script>
 
 <style>
