@@ -208,8 +208,10 @@ const edge = (column: number, size: number, span: number) =>
 	}
 
 	/* In the last slot of the first column, over the one still folded away
-	   there, when they fold (see below). */
+	   there, when they fold (see below). It runs on into the next column, so
+	   it lets the pointer through to the tiles that unfold under it. */
 	.more {
+		pointer-events: none;
 		position: absolute;
 		top: calc(var(--shown) * 2 * var(--pitch));
 		left: 0;
