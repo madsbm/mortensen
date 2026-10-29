@@ -225,8 +225,9 @@ const edge = (column: number, size: number, span: number) =>
 	}
 
 	/* Where the blocks can't share a line, the languages sit beside the
-	   first block, rather than on a line of their own. */
-	@media (max-width: 860px) {
+	   first block, rather than on a line of their own (measured: the row
+	   wraps at this width and under). */
+	@media (max-width: 639px) {
 		.languages {
 			order: 1;
 		}
