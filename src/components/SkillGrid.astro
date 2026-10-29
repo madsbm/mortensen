@@ -31,16 +31,31 @@ const groups = layoutSkills(
 	return { ...group, empty };
 });
 
-// Languages sit after the blocks, past a dividing line. Only the first few
-// show until the rest fold out.
+// Languages sit after the blocks, past a dividing line, running down in
+// columns of three tiles. Until the rest fold out, only the first column
+// shows, ending in a count of the others.
 const languages = t.skills.languages;
-const shown = 2;
+const languageRows = 3;
+const shown = languageRows - 1;
 const last = groups[groups.length - 1];
 const languagesStart = last.start + last.span + 2;
+const languageTiles = languages.items.map((skill, i) => {
+	const row = i % languageRows;
+	const column = Math.floor(i / languageRows);
+	const folded = i >= shown;
+	// A folded tile comes out from behind the one above it in the first
+	// column, or the one to its left after that, so those stack on top.
+	const from = column ? { x: -1, y: 0, z: 0 } : { x: 0, y: -1, z: folded ? 1 : 2 };
+	return {
+		...skill,
+		folded,
+		style: `--d: ${languagesStart + tile * (row + column)}; --fold: ${i - shown + 1}; --from-x: ${from.x}; --from-y: ${from.y}; --z: ${from.z}`,
+	};
+});
 
-// On a phone each block takes a row of its own, and the widest one (or the
-// row of languages) sets the size of the squares.
-const fit = Math.max(...groups.map((group) => group.span), languages.items.length * tile);
+// On a phone each block takes a row of its own, and the widest one sets the
+// size of the squares.
+const fit = Math.max(...groups.map((group) => group.span));
 
 // The ripple's timing follows the diagonal across all the blocks in a row.
 const place = (row: number, column: number, start: number, size = 1) =>
@@ -54,8 +69,9 @@ const edge = (column: number, size: number, span: number) =>
 <!--
 	The skills as a contribution graph: each skill lights up a square (a tile
 	with its icon, if it has one) in a block under its group's label, and the
-	languages follow in a row of their own. A skill shows its name on hover,
-	tap or focus. Everything sits in one row, wrapping on narrow screens.
+	languages follow in columns of their own. A skill shows its name on
+	hover, tap or focus. Everything sits in one row, wrapping on narrow
+	screens.
 -->
 <div class:list={['skill-grid', className]} style={`--fit: ${fit}`} data-skill-grid>
 	{
@@ -88,19 +104,10 @@ const edge = (column: number, size: number, span: number) =>
 	}
 	<div class="group languages">
 		<p class="label mono">{languages.label}</p>
-		<div
-			class="tiles"
-			style={`--count: ${languages.items.length}; --half: ${Math.ceil(languages.items.length / 2)}; --shown: ${shown}`}
-		>
+		<div class="tiles" style={`--rows: ${languageRows}; --shown: ${shown}`}>
 			<ul class="skills">
-				{languages.items.map((skill, i) => (
-					<li
-						class="cell skill"
-						style={`--d: ${languagesStart + i * tile}; --fold: ${i - shown + 1}`}
-						data-card
-						data-tile
-						data-folded={i >= shown ? '' : undefined}
-					>
+				{languageTiles.map((skill) => (
+					<li class="cell skill" style={skill.style} data-card data-tile data-folded={skill.folded ? '' : undefined}>
 						<button type="button" tabindex="-1" data-skill>
 							<SkillIcon name={skill.icon} />
 							<span class="name">{skill.name}</span>
@@ -183,27 +190,40 @@ const edge = (column: number, size: number, span: number) =>
 	.tiles {
 		position: relative;
 		display: grid;
-		grid-template-columns: repeat(var(--count), var(--tile));
-		grid-auto-rows: var(--tile);
+		grid-template-rows: repeat(var(--rows), var(--tile));
+		grid-auto-columns: var(--tile);
+		grid-auto-flow: column;
+		justify-content: start;
 		gap: var(--gap);
 	}
 
-	/* Over the ones still folded away, when they fold (see below). */
+	/* Stacked as they fold out (see below). The one showing a name rises
+	   above the rest, so nothing covers it. */
+	.tiles .skill {
+		z-index: var(--z);
+	}
+
+	.tiles .skill:is(:hover, :focus-within) {
+		z-index: 3;
+	}
+
+	/* In the last slot of the first column, over the one still folded away
+	   there, when they fold (see below). */
 	.more {
 		position: absolute;
-		top: 0;
-		left: calc(var(--shown) * 2 * var(--pitch));
+		top: calc(var(--shown) * 2 * var(--pitch));
+		left: 0;
 		display: none;
 		align-items: center;
 		height: var(--tile);
-		padding-left: 6px;
+		padding-left: 2px;
 		color: var(--ink-3);
 		font-size: 0.75rem;
 		white-space: nowrap;
 	}
 
-	/* Where the blocks can't share a line, the languages stack into two
-	   rows beside the first block, rather than taking a line of their own. */
+	/* Where the blocks can't share a line, the languages sit beside the
+	   first block, rather than on a line of their own. */
 	@media (max-width: 860px) {
 		.languages {
 			order: 1;
@@ -211,10 +231,6 @@ const edge = (column: number, size: number, span: number) =>
 
 		.group:nth-child(n + 2):not(.languages) {
 			order: 2;
-		}
-
-		.tiles {
-			grid-template-columns: repeat(var(--half), var(--tile));
 		}
 	}
 
@@ -386,24 +402,23 @@ const edge = (column: number, size: number, span: number) =>
 		}
 	}
 
-	/* With a mouse and the languages in one row, those past the first few
-	   are tucked in behind the last one showing, and fold out to the right,
-	   one after another, while the row is hovered or a key moves onto one of
-	   them. */
-	@media (hover: hover) and (pointer: fine) and (min-width: 861px) {
+	/* With a mouse, the languages past the first column's first few are
+	   tucked in behind their neighbours, and fold out one after another
+	   (down the first column, then out into the next) while the languages
+	   are hovered or a key moves onto one of them. */
+	@media (hover: hover) and (pointer: fine) {
 		.more {
 			display: flex;
 			transition: opacity 150ms ease;
 		}
 
-		.languages .skill:not([data-folded]) {
-			z-index: 1;
-		}
-
 		.languages [data-folded] {
 			opacity: 0;
 			pointer-events: none;
-			transform: translateX(calc(var(--fold) * -2 * var(--pitch)));
+			transform: translate(
+				calc(var(--from-x) * 2 * var(--pitch)),
+				calc(var(--from-y) * 2 * var(--pitch))
+			);
 			transition:
 				opacity 150ms ease,
 				transform 200ms var(--ease-out);
